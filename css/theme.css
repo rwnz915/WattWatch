@@ -1,0 +1,186 @@
+/* Enable dark background for full content area */
+html.dark-mode #content-wrapper,
+html.dark-mode #content {
+    background-color: #1a1a1a !important;
+    color: #f1f1f1 !important;
+}
+
+/* Override Bootstrap bg-white (cards, footer, topbar) */
+html.dark-mode .bg-white {
+    background-color: #2c2c2c !important;
+    color: #f1f1f1 !important;
+}
+
+/* Cards */
+html.dark-mode .card {
+    background-color: #2c2c2c !important;
+    border-color: #444 !important;
+}
+
+/* Card headers */
+html.dark-mode .card-header {
+    background-color: #333 !important;
+    color: #f1f1f1 !important;
+}
+
+/* Text overrides */
+html.dark-mode .text-gray-800,
+html.dark-mode .text-dark {
+    color: #f1f1f1 !important;
+}
+
+/* Footer */
+html.dark-mode footer.sticky-footer {
+    background-color: #2c2c2c !important;
+    color: #ddd !important;
+}
+
+/* Search input field in dark mode */
+html.dark-mode .navbar-search .form-control {
+    background-color: #333 !important;
+    color: #f1f1f1 !important;
+    border: 1px solid #555 !important;
+}
+
+/* Search button in dark mode */
+html.dark-mode .navbar-search .btn {
+    background-color: #444 !important;
+    border-color: #555 !important;
+    color: #f1f1f1 !important;
+}
+html.dark-mode .navbar-search .btn:hover {
+    background-color: #555 !important;
+    border-color: #666 !important;
+}
+
+/* Form select (dropdowns) in dark mode */
+html.dark-mode .form-control {
+    background-color: #2c2c2c !important;
+    color: #f1f1f1 !important;
+    border: 1px solid #555 !important;
+}
+
+/* Dropdown options */
+html.dark-mode select.form-control option {
+    background-color: #2c2c2c !important;
+    color: #f1f1f1 !important;
+}
+
+/* Dark mode button styling */
+html.dark-mode .btn-primary {
+    background-color: #444 !important;
+    border-color: #555 !important;
+    color: #f1f1f1 !important;
+}
+
+html.dark-mode .btn-primary:hover {
+    background-color: #555 !important;
+    border-color: #666 !important;
+}
+
+/* List group in dark mode */
+html.dark-mode .list-group-item {
+    background-color: #2c2c2c !important;
+    color: #f1f1f1 !important;
+    border-color: #444 !important;
+}
+
+/* Muted text inside list group */
+html.dark-mode .list-group-item.text-muted {
+    color: #bbb !important;
+}
+
+/* Dark inputs for content area only (keeps sidebar primary) */
+html.dark-mode #content-wrapper .form-control,
+html.dark-mode #content-wrapper select.form-control,
+html.dark-mode #content-wrapper textarea.form-control {
+  background-color: #222 !important;
+  color: #eee !important;
+  border: 1px solid #444 !important;
+  box-shadow: none !important;
+}
+
+/* Autofill (Chrome) - force dark background + text color */
+html.dark-mode #content-wrapper input.form-control:-webkit-autofill,
+html.dark-mode #content-wrapper textarea.form-control:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px #222 inset !important;
+  box-shadow: 0 0 0px 1000px #222 inset !important;
+  -webkit-text-fill-color: #eee !important;
+}
+
+/* Firefox autofill */
+html.dark-mode #content-wrapper input:-moz-autofill,
+html.dark-mode #content-wrapper textarea:-moz-autofill {
+  box-shadow: 0 0 0px 1000px #222 inset !important;
+  -moz-text-fill-color: #eee !important;
+}
+
+/* Dropdowns in dark mode */
+html.dark-mode .dropdown-menu {
+    background-color: #2c2c2c !important;
+    color: #f1f1f1 !important;
+    border: 1px solid #444 !important;
+}
+
+/* Keep dropdown headers primary */
+html.dark-mode .dropdown-header {
+    background-color: var(--primary, #007bff) !important;
+    color: #fff !important;
+}
+
+/* Dropdown items */
+html.dark-mode .dropdown-item {
+    background-color: transparent !important;
+    color: #f1f1f1 !important;
+}
+
+/* Hover effect */
+html.dark-mode .dropdown-item:hover,
+html.dark-mode .dropdown-item:focus {
+    background-color: #444 !important;
+    color: #fff !important;
+}
+
+/* Divider */
+html.dark-mode .dropdown-divider {
+    border-top: 1px solid #555 !important;
+}
+
+/* Dark theme for modals */
+html.dark-mode .modal-content {
+    background-color: #2c2c2c !important;
+    color: #f1f1f1 !important;
+    border: 1px solid #444 !important;
+}
+
+/* Modal header */
+html.dark-mode .modal-header {
+    border-bottom: 1px solid #555 !important;
+}
+
+/* Close button */
+html.dark-mode .modal-header .close {
+    color: #f1f1f1;
+    opacity: 1;
+}
+
+/* Modal html */
+html.dark-mode .modal-html {
+    color: #f1f1f1 !important;
+}
+
+/* Modal footer */
+html.dark-mode .modal-footer {
+    border-top: 1px solid #555 !important;
+}
+
+/* Buttons inside modal */
+html.dark-mode .modal-footer .btn-secondary {
+    background-color: #555;
+    color: #f1f1f1;
+    border: 1px solid #666;
+}
+
+html.dark-mode .modal-footer .btn-secondary:hover {
+    background-color: #666;
+}
