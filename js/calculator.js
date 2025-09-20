@@ -240,12 +240,12 @@ form.addEventListener("submit", (e) => {
 
   const trim = (num, dec = 5) => parseFloat(num.toString()).toFixed(dec);
 
-  result.textContent =
-    `${appliance} - ${type} - ${model}:\n` +
-    `Cost/day = ₱${trim(costPerDay)}\n` +
-    `Cost/week = ₱${trim(costPerWeek)}\n` +
+  result.innerHTML =
+    `${appliance} - ${type} - ${model}:<br>` +
+    `Cost/day = ₱${trim(costPerDay)}<br>` +
+    `Cost/week = ₱${trim(costPerWeek)}<br>` +
     `Cost/month = ₱${trim(costPerMonth)}`;
-
+  
   historyItems.unshift(`${model} - ₱${trim(costPerMonth, 2)}/month`);
   if (historyItems.length > 3) historyItems.pop();
   renderHistory();
@@ -283,3 +283,4 @@ function renderHistory() {
     historyList.appendChild(li);
   });
 }
+
