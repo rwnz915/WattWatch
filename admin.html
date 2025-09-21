@@ -319,6 +319,15 @@
     </script>
 
     <script>
+        let userName = document.getElementById("userName");
+
+        let userInfo = getUserInfo();
+        if (!userInfo) {
+            window.location.href = "index.html";
+        } else {
+            userName.innerHTML = userInfo.firstName;
+        }
+
         document.getElementById("logoutBtn").addEventListener("click", () => {
             clearUserInfo(); // clear localStorage + sessionStorage
             window.location.href = "index.html"; // redirect to login
