@@ -1,49 +1,51 @@
-function loadPage(page) {
+async function loadPage(page) {
   const content = document.getElementById("main-content");
 
-  // Start fade out
+  // Show fade out
   content.classList.add("fade-out");
 
-  // Wait for fade-out transition before loading
-  setTimeout(() => {
-    fetch(page)
-      .then(response => {
-        if (!response.ok) throw new Error("Page not found: " + page);
-        return response.text();
-      })
-      .then(html => {
-        content.innerHTML = html;
+  setTimeout(async () => {
+    try {
+      const response = await fetch(page);
+      if (!response.ok) throw new Error("Page not found: " + page);
+      const html = await response.text();
 
-        // Save current page
-        localStorage.setItem("currentPage", page);
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = html;
 
-        // <title>
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = html;
-        const pageTitle = tempDiv.querySelector("title");
-        if (pageTitle) document.title = pageTitle.textContent;
+      // Inject content
+      content.innerHTML = html;
 
-        // Re-run <script> tags inside loaded page
-        const scripts = tempDiv.querySelectorAll("script");
-        scripts.forEach(oldScript => {
-          const newScript = document.createElement("script");
-          if (oldScript.src) {
-            newScript.src = oldScript.src;
-          } else {
-            newScript.textContent = oldScript.textContent;
-          }
-          document.body.appendChild(newScript);
-        });
+      // Update page title
+      const pageTitle = tempDiv.querySelector("title");
+      if (pageTitle) document.title = pageTitle.textContent;
 
-        initThemeSelector();
-
-        // Fade back in
-        content.classList.remove("fade-out");
-      })
-      .catch(error => {
-        content.innerHTML = "<div class='p-3 text-danger'>⚠ " + error.message + "</div>";
-        content.classList.remove("fade-out");
+      // Re-run scripts
+      const scripts = tempDiv.querySelectorAll("script");
+      scripts.forEach(oldScript => {
+        const newScript = document.createElement("script");
+        if (oldScript.src) newScript.src = oldScript.src;
+        else newScript.textContent = oldScript.textContent;
+        document.body.appendChild(newScript);
       });
+
+      // Init page-specific scripts
+      if (typeof initThemeSelector === "function") initThemeSelector();
+      if (typeof initSettingsPage === "function") initSettingsPage();
+
+      const saveBtn = document.getElementById("saveBtn");
+      if (saveBtn) saveBtn.addEventListener("click", saveSettings);
+
+      // Save current page
+      localStorage.setItem("currentPage", page);
+
+      // Fade back in
+      content.classList.remove("fade-out");
+
+    } catch (error) {
+      content.innerHTML = "<div class='p-3 text-danger'>⚠ " + error.message + "</div>";
+      content.classList.remove("fade-out");
+    }
   }, 100);
 }
 

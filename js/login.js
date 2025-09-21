@@ -71,9 +71,20 @@ async function signIn() {
       // Store user info depending on Remember Me checkbox
       setUserInfo(userData, rememberMeInput && rememberMeInput.checked);
 
+      // ---------------- LOAD SETTINGS BEFORE NAVIGATION ----------------
+      if (typeof loadSettings === "function") {
+        try {
+          await loadSettings();  // ensures theme is applied from backend
+        } catch (err) {
+          console.warn("Failed to load settings after login:", err);
+        }
+      }
+
+      // Navigate to the user page after settings applied
       if (data.page) {
         window.location.href = data.page;
       }
+
     } else {
       showMessage(data.message || "Incorrect email or password");
     }

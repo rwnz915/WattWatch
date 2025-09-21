@@ -307,7 +307,7 @@
     <script src="vendor/chart.js/Chart.min.js"></script>
 
     <!-- loader -->
-    <script src="js/theme.js"></script>
+    <script src="js/settings.js"></script>
     <script src="js/userHelper.js"></script>
     <script src="js/pages-loader_admin.js"></script>
 
@@ -325,6 +325,7 @@
         document.getElementById("logoutBtn").addEventListener("click", () => {
             clearUserInfo(); // clear localStorage + sessionStorage
             window.location.href = "index.html"; // redirect to login
+            localStorage.removeItem("theme");
         });
     </script>
 
