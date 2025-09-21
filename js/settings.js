@@ -34,30 +34,26 @@ async function loadSettings() {
   const userId = getUserId();
   if (!userId) return;
 
-  try {
-    const res = await fetch(`${BASE_URL}/api/settings/${userId}`, {
-      method: "GET",
-      headers: { "Accept": "application/json" }
-    });
+  const container = document.getElementById("settings-container");
+  if (container) container.style.opacity = 0; // hide while loading
 
-    if (!res.ok) {
-      console.error("Failed to load settings:", res.status, await res.text());
-      return;
-    }
+  try {
+    const res = await fetch(`${BASE_URL}/api/settings/${userId}`);
+    if (!res.ok) throw new Error("Failed to load settings");
 
     const data = await res.json();
 
-    // Fill form
     const themeSelect = document.getElementById("themeSelect");
     const notifSelect = document.getElementById("notifSelect");
     if (themeSelect) themeSelect.value = data.theme;
     if (notifSelect) notifSelect.value = data.notifications ? "Enabled" : "Disabled";
-    localStorage.setItem("theme", data.theme);
 
-    // Apply theme
     applyTheme(data.theme);
+
   } catch (err) {
     console.error("Error loading settings:", err);
+  } finally {
+    if (container) container.style.opacity = 1; // show after loading
   }
 }
 
