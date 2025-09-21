@@ -1,8 +1,129 @@
-<title> WattWatch - Profile </title>
-
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800">Profile</h1>
+  <h1 class="h3 mb-4 text-gray-800">Profile</h1>
 
+  <div class="card shadow-lg p-4">
+    <div class="row">
+
+      <!-- Profile Picture -->
+      <div class="col-12 col-md-2 text-center mb-4 mb-md-0">
+        <img id="profilePreview" src="img/undraw_profile.svg"
+             class="rounded-circle img-thumbnail mb-3"
+             style="width: 120px; height: 120px; object-fit: cover;">
+        <input type="file" id="profileImageInput" accept="image/*" class="d-none"> <br>
+        <button id="changePhotoBtn" class="btn btn-outline-primary btn-sm">Change Photo</button>
+      </div>
+
+      <!-- Profile Info -->
+      <div class="col-12 col-md-10 d-flex flex-column">
+
+        <!-- Top section: Username + Edit -->
+        <div class="mb-4">
+          <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3">
+            <h5 id="displayName" class="mb-2 mb-sm-0">User Name</h5>
+            <button id="editBtn" class="btn btn-primary btn-sm">Edit Profile</button>
+          </div>
+
+          <!-- Email row -->
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3">
+            <p class="mb-2 mb-sm-0"><strong>Email:</strong> user@example.com</p>
+            <button id="changeEmailBtn" class="btn btn-outline-secondary btn-sm">Change Email</button>
+        </div>
+
+
+          <!-- Password row -->
+          <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3">
+            <p class="mb-2 mb-sm-0"><strong>Password:</strong> *********</p>
+            <button id="changePasswordBtn" class="btn btn-outline-secondary btn-sm">Change Password</button>
+          </div>
+        </div>
+
+        <!-- Edit Form (hidden by default) -->
+        <form id="profileForm" class="d-none">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="firstName" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="lastName" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-success mt-2">Save</button>
+          <button type="button" id="cancelBtn" class="btn btn-secondary mt-2">Cancel</button>
+        </form>
+
+        <!-- Bottom: Account Created + Last Login -->
+        <div class="mt-auto pt-3 border-top">
+            <p class="mb-1"><strong>Account Created:</strong> <span id="accountCreated">Jan 15, 2025</span></p>
+            <p class="mb-0"><strong>Last Login:</strong> <span id="lastLogin">Sep 21, 2025, 10:45 PM</span></p>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- scripts -->
+
+<script>
+  const profileForm = document.getElementById("profileForm");
+  const editBtn = document.getElementById("editBtn");
+  const cancelBtn = document.getElementById("cancelBtn");
+  const displayName = document.getElementById("displayName");
+  const preview = document.getElementById("profilePreview");
+  const imageInput = document.getElementById("profileImageInput");
+  const changePhotoBtn = document.getElementById("changePhotoBtn");
+
+  // Load saved profile
+  document.addEventListener("DOMContentLoaded", () => {
+    const user = JSON.parse(localStorage.getItem("userInfo")) || {};
+    document.getElementById("firstName").value = user.firstName || "";
+    document.getElementById("lastName").value = user.lastName || "";
+    if (user.profileImage) preview.src = user.profileImage;
+    displayName.textContent = [user.firstName, user.lastName].filter(Boolean).join(" ") || "User";
+  });
+
+  // Edit mode toggle
+  editBtn.addEventListener("click", () => {
+    profileForm.classList.remove("d-none");
+    editBtn.classList.add("d-none");
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    profileForm.classList.add("d-none");
+    editBtn.classList.remove("d-none");
+  });
+
+  // Change profile photo
+  changePhotoBtn.addEventListener("click", () => imageInput.click());
+  imageInput.addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = ev => { preview.src = ev.target.result; };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Save profile
+  profileForm.addEventListener("submit", e => {
+    e.preventDefault();
+    let user = JSON.parse(localStorage.getItem("userInfo")) || {};
+    user.firstName = document.getElementById("firstName").value.trim();
+    user.lastName = document.getElementById("lastName").value.trim();
+    user.profileImage = preview.src;
+
+    localStorage.setItem("userInfo", JSON.stringify(user));
+
+    // Update navbar instantly
+    const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
+    displayName.textContent = fullName || "User";
+    document.getElementById("userName").textContent = fullName || "User";
+    if (user.profileImage) {
+      document.getElementById("navProfileImage").src = user.profileImage;
+    }
+
+    profileForm.classList.add("d-none");
+    editBtn.classList.remove("d-none");
+  });
+</script>
+
