@@ -11,3 +11,7 @@
   content: "\20B1"; /* Unicode for ₱ */
 }
 
+#settings-container {
+  transition: opacity 0.1s ease;
+}
+
