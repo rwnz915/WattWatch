@@ -1,5 +1,6 @@
 {
   "redirects": [
+    { "source": "/admin.html", "destination": "/admin", "permanent": true },
     { "source": "/user.html", "destination": "/main", "permanent": true },
     { "source": "/index.html", "destination": "/login", "permanent": true },
     { "source": "/register.html", "destination": "/register", "permanent": true },
@@ -7,6 +8,7 @@
   ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/user.html" },
+    { "source": "/admin", "destination": "/admin.html" },
     { "source": "/main", "destination": "/user.html" },
     { "source": "/login", "destination": "/index.html" },
     { "source": "/register", "destination": "/register.html" },
