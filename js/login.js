@@ -89,6 +89,8 @@ googleLoginBtn.addEventListener("click", () => {
 
   const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${encodeURIComponent(scope)}&prompt=${prompt}`;
 
-  // Redirect current tab
+
   window.location.href = oauthUrl;
 });
+
+

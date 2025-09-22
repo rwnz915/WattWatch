@@ -1,55 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Google Callback</title>
-  <script src="js/userHelper.js"></script>
-  <script>
-    async function handleGoogleCallback() {
-      const params = new URLSearchParams(window.location.search);
-      const code = params.get("code");
-
-      if (!code) {
-        alert("No code returned from Google");
-        return;
-      }
-
-      try {
-        const res = await fetch("https://wattwatch-backend.onrender.com/api/auth/google-login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code })
-        });
-
-        const data = await res.json();
-
-        if (res.ok) {
-          // Save user info like normal login
-          setUserInfo({
-            id: data.id,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email,
-            page: data.page
-          }, true); // remember me
-
-          // Redirect to user/admin page
-          window.location.href = data.page;
-        } else {
-          alert(data.message || "Google login failed");
-          window.location.href = "login.html";
+    <meta charset="UTF-8">
+    <title>Google Login Callback</title>
+    <script>
+        // Helper functions
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
         }
-      } catch (err) {
-        console.error(err);
-        alert("Server error during Google login");
-        window.location.href = "login.html";
-      }
-    }
 
-    window.addEventListener("DOMContentLoaded", handleGoogleCallback);
-  </script>
+        function setUserInfo(user) {
+            localStorage.setItem("userInfo", JSON.stringify(user));
+        }
+
+        function showMessage(msg) {
+            alert(msg); // simple alert, can replace with modal if desired
+        }
+
+        async function handleGoogleCallback() {
+            const code = getQueryParam("code");
+            if (!code) {
+                showMessage("No code found. Google login failed.");
+                return;
+            }
+
+            try {
+                const response = await fetch("https://wattwatch-backend.onrender.com/api/auth/google-login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ code })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Save user info
+                    setUserInfo({
+                        id: data.id,
+                        firstName: data.firstName,
+                        lastName: data.lastName,
+                        email: data.email,
+                        page: data.page
+                    });
+
+                    // Redirect to user/admin page
+                    if (data.page) {
+                        window.location.href = data.page;
+                    } else {
+                        showMessage("Login successful, but no page found.");
+                    }
+                } else {
+                    showMessage(data.message || "Google login failed");
+                }
+            } catch (err) {
+                console.error(err);
+                showMessage("Server error during Google login.");
+            }
+        }
+
+        window.addEventListener("DOMContentLoaded", handleGoogleCallback);
+    </script>
 </head>
 <body>
-  <p>Logging in with Google...</p>
+    <p>Processing Google login...</p>
 </body>
 </html>
