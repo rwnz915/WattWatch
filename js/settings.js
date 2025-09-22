@@ -61,7 +61,7 @@ async function loadSettings() {
 async function saveSettings() {
   const userId = getUserId();
   if (!userId) {
-    alert("You must be logged in to save settings.");
+    showMessage("You must be logged in to save settings.");
     return;
   }
 
@@ -77,7 +77,7 @@ async function saveSettings() {
 
     if (!res.ok) {
       console.error("Failed to save settings:", res.status, await res.text());
-      alert("Failed to save settings!");
+      showMessage("Failed to save settings!");
       return;
     }
 
@@ -85,10 +85,10 @@ async function saveSettings() {
     console.log(result.message);
 
     applyTheme(theme);
-    alert("Settings saved successfully!");
+    showMessage("Settings saved successfully!");
   } catch (err) {
     console.error("Error saving settings:", err);
-    alert("Failed to save settings!");
+    showMessage("Failed to save settings!");
   }
 }
 
