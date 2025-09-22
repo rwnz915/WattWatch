@@ -242,7 +242,7 @@ async function loadCalculationHistory(userId) {
       data.forEach(item => {
         const li = document.createElement("li");
         li.className = "list-group-item";
-        li.textContent = `${item.model} - ₱${parseFloat(item.costMonth).toFixed(2)}/month`;
+        li.textContent = `${item.appliance} ${item.model} - ₱${parseFloat(item.costMonth).toFixed(2)}/month`;
         historyList.appendChild(li);
         total += parseFloat(item.costMonth);
       });
