@@ -81,7 +81,7 @@ loginBtn.addEventListener("click", signIn);
 
 // ----------------- GOOGLE LOGIN -----------------
 googleLoginBtn.addEventListener("click", () => {
-  const clientId = "YOUR_CLIENT_ID";
+  const clientId = "988525355387-trr9q5aoejn7l83o822mk6689g85j87m.apps.googleusercontent.com";
   const redirectUri = "https://watt-watch.vercel.app/google-callback.html";
   const scope = "openid profile email";
   const responseType = "code";
