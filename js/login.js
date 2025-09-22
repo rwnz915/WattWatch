@@ -82,7 +82,7 @@ loginBtn.addEventListener("click", signIn);
 // ----------------- GOOGLE LOGIN -----------------
 googleLoginBtn.addEventListener("click", () => {
   google.accounts.id.initialize({
-    client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+    client_id: "988525355387-trr9q5aoejn7l83o822mk6689g85j87m.apps.googleusercontent.com",
     callback: handleGoogleCredentialResponse
   });
   google.accounts.id.prompt(); // triggers Google One Tap / popup
