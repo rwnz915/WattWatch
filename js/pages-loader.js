@@ -39,10 +39,10 @@ async function loadPage(page, pushState = true) {
       // Save current page
       localStorage.setItem("currentPage", page);
 
-      if (pushState) {
+      /*if (pushState) {
         const cleanUrl = "/" + page.replace("pages/", "").replace(".html", "");
         history.pushState({ page }, "", cleanUrl);
-      }
+      }*/
 
       // Fade back in
       content.classList.remove("fade-out");
@@ -54,11 +54,12 @@ async function loadPage(page, pushState = true) {
   }, 100);
 }
 
+/*
 window.addEventListener("popstate", (event) => {
   if (event.state && event.state.page) {
     loadPage(event.state.page, false);
   }
-});
+});*/
 
 document.addEventListener("DOMContentLoaded", function () {
   const savedPage = localStorage.getItem("currentPage") || "pages/dashboard.html";
