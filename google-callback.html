@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title>Google Callback</title>
   <script src="js/userHelper.js"></script>
+  <script src="js/settings.js"></script>
+    <script src="js/appState.js"></script>
   <script>
     async function handleGoogleCallback() {
       const params = new URLSearchParams(window.location.search);
@@ -33,16 +35,26 @@
             page: data.page
           }, true); // remember me
 
+        if (typeof loadSettings === "function") {
+          try { await loadSettings(); } catch (err) { console.warn("Failed to load settings after login:", err); }
+        }
+
+        if (typeof updateAppStateCalculations === "function") {
+          try { await updateAppStateCalculations(data.id); } catch (err) { 
+              console.warn("Failed to update AppState after login:", err); 
+          }
+        }
+
           // Redirect to user/admin page
           window.location.href = data.page;
         } else {
           alert(data.message || "Google login failed");
-          window.location.href = "login.html";
+          window.location.href = "index.html";
         }
       } catch (err) {
         console.error(err);
         alert("Server error during Google login");
-        window.location.href = "login.html";
+        window.location.href = "index.html";
       }
     }
 
