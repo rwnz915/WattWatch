@@ -382,5 +382,6 @@ async function initCalculatorPage() {
     await fetch(`https://wattwatch-backend.onrender.com/api/calculation/clear/${user.id}`, { method: "DELETE" });
     await loadCalculationHistory(user.id);
     result.textContent = "";
+    AppState.clearCalculator();
   });
 }
