@@ -1,4 +1,4 @@
-async function loadPage(page) {
+async function loadPage(page, pushState = true) {
   const content = document.getElementById("main-content");
 
   // Show fade out
