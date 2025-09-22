@@ -81,7 +81,7 @@ loginBtn.addEventListener("click", signIn);
 
 // ----------------- GOOGLE LOGIN -----------------
 googleLoginBtn.addEventListener("click", () => {
-  const clientId = "988525355387-trr9q5aoejn7l83o822mk6689g85j87m.apps.googleusercontent.com";
+  const clientId = "YOUR_CLIENT_ID";
   const redirectUri = "https://watt-watch.vercel.app/google-callback.html";
   const scope = "openid profile email";
   const responseType = "code";
@@ -89,6 +89,6 @@ googleLoginBtn.addEventListener("click", () => {
 
   const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${encodeURIComponent(scope)}&prompt=${prompt}`;
 
-  window.open(oauthUrl, "_blank");
+  // Redirect current tab
+  window.location.href = oauthUrl;
 });
-
