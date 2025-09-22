@@ -66,6 +66,12 @@ async function signIn() {
         try { await loadSettings(); } catch (err) { console.warn("Failed to load settings after login:", err); }
       }
 
+      if (typeof updateAppStateCalculations === "function") {
+          try { await updateAppStateCalculations(data.id); } catch (err) { 
+              console.warn("Failed to update AppState after login:", err); 
+          }
+      }
+
       if (data.page) window.location.href = data.page;
 
     } else {

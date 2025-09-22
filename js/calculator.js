@@ -237,6 +237,7 @@ async function loadCalculationHistory(userId) {
     const monthlyTotal = document.getElementById("monthlyTotal");
     historyList.innerHTML = "";
     let total = 0;
+    //let khwtotal = 0;
 
     if (data && data.length > 0) {
       data.forEach(item => {
@@ -245,6 +246,19 @@ async function loadCalculationHistory(userId) {
         li.textContent = `${item.appliance} ${item.model} - ₱${parseFloat(item.costMonth).toFixed(2)}/month`;
         historyList.appendChild(li);
         total += parseFloat(item.costMonth);
+        //let kwhDay = (item.wattage / 1000) * item.hours;
+        //khwtotal = kwhDay * 30;
+        AppState.addCalculator({
+          appliance: item.appliance,
+          type: item.type,
+          model: item.model,
+          wattage: item.wattage,
+          hours: item.hours,
+          rate: item.rate
+        });
+
+        //const allCalculations = AppState.getCalculator();
+        //console.log("All calculations: ", allCalculations);
       });
     } else {
       historyList.innerHTML = '<li class="list-group-item text-muted">No recent calculations</li>';
