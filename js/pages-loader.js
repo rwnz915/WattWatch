@@ -20,14 +20,25 @@ async function loadPage(page, pushState = true) {
       const pageTitle = tempDiv.querySelector("title");
       if (pageTitle) document.title = pageTitle.textContent;
 
-      // Re-run scripts
+      // Re-run scripts (external or inline)
       const scripts = tempDiv.querySelectorAll("script");
-      scripts.forEach(oldScript => {
-        const newScript = document.createElement("script");
-        if (oldScript.src) newScript.src = oldScript.src;
-        else newScript.textContent = oldScript.textContent;
-        document.body.appendChild(newScript);
-      });
+      for (const oldScript of scripts) {
+        await new Promise((resolve) => {
+          const newScript = document.createElement("script");
+          if (oldScript.src) {
+            newScript.src = oldScript.src;
+            newScript.onload = resolve;
+          } else {
+            newScript.textContent = oldScript.textContent;
+            resolve();
+          }
+          document.body.appendChild(newScript);
+        });
+      }
+
+      if (page.includes("calculator.html") && typeof initCalculatorPage === "function") {
+          initCalculatorPage();
+      }
 
       // Init page-specific scripts
       if (typeof initThemeSelector === "function") initThemeSelector();

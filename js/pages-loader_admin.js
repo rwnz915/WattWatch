@@ -1,4 +1,4 @@
-async function loadPage(page) {
+async function loadPage(page, pushState = true) {
   const content = document.getElementById("main-content");
 
   // Show fade out
@@ -20,14 +20,25 @@ async function loadPage(page) {
       const pageTitle = tempDiv.querySelector("title");
       if (pageTitle) document.title = pageTitle.textContent;
 
-      // Re-run scripts
+      // Re-run scripts (external or inline)
       const scripts = tempDiv.querySelectorAll("script");
-      scripts.forEach(oldScript => {
-        const newScript = document.createElement("script");
-        if (oldScript.src) newScript.src = oldScript.src;
-        else newScript.textContent = oldScript.textContent;
-        document.body.appendChild(newScript);
-      });
+      for (const oldScript of scripts) {
+        await new Promise((resolve) => {
+          const newScript = document.createElement("script");
+          if (oldScript.src) {
+            newScript.src = oldScript.src;
+            newScript.onload = resolve;
+          } else {
+            newScript.textContent = oldScript.textContent;
+            resolve();
+          }
+          document.body.appendChild(newScript);
+        });
+      }
+
+      if (page.includes("calculator.html") && typeof initCalculatorPage === "function") {
+          initCalculatorPage();
+      }
 
       // Init page-specific scripts
       if (typeof initThemeSelector === "function") initThemeSelector();
@@ -39,6 +50,11 @@ async function loadPage(page) {
       // Save current page
       localStorage.setItem("currentPage_Admin", page);
 
+      /*if (pushState) {
+        const cleanUrl = "/" + page.replace("pages/", "").replace(".html", "");
+        history.pushState({ page }, "", cleanUrl);
+      }*/
+
       // Fade back in
       content.classList.remove("fade-out");
 
@@ -49,6 +65,12 @@ async function loadPage(page) {
   }, 100);
 }
 
+/*
+window.addEventListener("popstate", (event) => {
+  if (event.state && event.state.page) {
+    loadPage(event.state.page, false);
+  }
+});*/
 
 document.addEventListener("DOMContentLoaded", function () {
   const savedPage = localStorage.getItem("currentPage_Admin") || "pages/dashboard_admin.html";

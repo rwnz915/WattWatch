@@ -155,128 +155,114 @@ const monthlyTotal = document.getElementById("monthlyTotal");
 const result = document.getElementById("result");
 const clearForm = document.getElementById("clearForm");
 
-// Prevent e/E/+/- in number inputs
+// ---------- Prevent invalid number inputs ----------
 document.querySelectorAll(".only-numbers").forEach((input) => {
   input.addEventListener("keydown", (e) => {
     if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
   });
 });
 
-// Populate Type based on Appliance
-applianceSelect.addEventListener("change", () => {
-  const selected = applianceSelect.value;
-  typeSelect.innerHTML = '<option value="">-- Select Type --</option>';
-  modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
-  modelSelect.disabled = true;
-
-  if (selected && applianceData[selected]) {
-    Object.keys(applianceData[selected]).forEach((t) => {
-      const opt = document.createElement("option");
-      opt.value = t;
-      opt.textContent = t;
-      typeSelect.appendChild(opt);
-    });
-    typeSelect.disabled = false;
-  } else {
-    typeSelect.disabled = true;
-  }
-});
-
-// Populate Model based on Type
-typeSelect.addEventListener("change", () => {
-  const appliance = applianceSelect.value;
-  const type = typeSelect.value;
-  modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
-
-  if (appliance && type && applianceData[appliance][type]) {
-    applianceData[appliance][type].forEach((m) => {
-      const opt = document.createElement("option");
-      opt.value = m;
-      opt.textContent = m;
-      modelSelect.appendChild(opt);
-    });
-    modelSelect.disabled = false;
-  } else {
+// ---------- Cascading dropdowns ----------
+function initDropdowns() {
+  applianceSelect.addEventListener("change", () => {
+    const selected = applianceSelect.value;
+    typeSelect.innerHTML = '<option value="">-- Select Type --</option>';
+    modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
     modelSelect.disabled = true;
-  }
-});
 
-// ---------- Auto-fill wattage, hours, rate ----------
-modelSelect.addEventListener("change", () => {
-  const selectedModel = modelSelect.value;
-  if (applianceDefaults[selectedModel]) {
-    document.getElementById("wattage").value = applianceDefaults[selectedModel].wattage;
-    document.getElementById("hours").value = applianceDefaults[selectedModel].hours;
-    document.getElementById("rate").value = applianceDefaults[selectedModel].rate;
-  }
-});
+    if (selected && applianceData[selected]) {
+      Object.keys(applianceData[selected]).forEach((t) => {
+        const opt = document.createElement("option");
+        opt.value = t;
+        opt.textContent = t;
+        typeSelect.appendChild(opt);
+      });
+      typeSelect.disabled = false;
+    } else {
+      typeSelect.disabled = true;
+    }
+  });
+
+  typeSelect.addEventListener("change", () => {
+    const appliance = applianceSelect.value;
+    const type = typeSelect.value;
+    modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
+
+    if (appliance && type && applianceData[appliance][type]) {
+      applianceData[appliance][type].forEach((m) => {
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = m;
+        modelSelect.appendChild(opt);
+      });
+      modelSelect.disabled = false;
+    } else {
+      modelSelect.disabled = true;
+    }
+  });
+
+  modelSelect.addEventListener("change", () => {
+    const selectedModel = modelSelect.value;
+    if (applianceDefaults[selectedModel]) {
+      document.getElementById("wattage").value = applianceDefaults[selectedModel].wattage;
+      document.getElementById("hours").value = applianceDefaults[selectedModel].hours;
+      document.getElementById("rate").value = applianceDefaults[selectedModel].rate;
+    }
+  });
+}
 
 // ---------- Calculator ----------
 let total = 0;
 let historyItems = [];
 
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  const appliance = applianceSelect.value;
-  const type = typeSelect.value;
-  const model = modelSelect.value;
-  const wattage = parseFloat(document.getElementById("wattage").value);
-  const hours = parseFloat(document.getElementById("hours").value);
-  const rate = parseFloat(document.getElementById("rate").value);
-
-  if (!appliance || !type || /*!model ||*/ isNaN(wattage) || isNaN(hours) || isNaN(rate)) {
-    alert("Please complete all fields correctly.");
-    return;
+async function saveCalculation(userId, appliance, type, model, wattage, hours, rate) {
+  try {
+    await fetch("https://wattwatch-backend.onrender.com/api/calculation/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, appliance, type, model, wattage, hours, rate })
+    });
+  } catch (err) {
+    console.error(err);
   }
+}
 
-  const kWhPerDay = (wattage / 1000) * hours;
-  const kWhPerWeek = kWhPerDay * 7;
-  const kWhPerMonth = kWhPerDay * 30;
+async function loadCalculationHistory(userId) {
+  try {
+    const res = await fetch(`https://wattwatch-backend.onrender.com/api/calculation/history/${userId}`);
+    if (!res.ok) throw new Error("Failed to fetch history");
+    const data = await res.json();
 
-  const costPerDay = kWhPerDay * rate;
-  const costPerWeek = kWhPerWeek * rate;
-  const costPerMonth = kWhPerMonth * rate;
+    const historyList = document.getElementById("history");
+    const monthlyTotal = document.getElementById("monthlyTotal");
+    historyList.innerHTML = "";
+    let total = 0;
 
-  const trim = (num, dec = 5) => parseFloat(num.toString()).toFixed(dec);
+    if (data && data.length > 0) {
+      data.forEach(item => {
+        const li = document.createElement("li");
+        li.className = "list-group-item";
+        li.textContent = `${item.model} - ₱${parseFloat(item.costMonth).toFixed(2)}/month`;
+        historyList.appendChild(li);
+        total += parseFloat(item.costMonth);
+      });
+    } else {
+      historyList.innerHTML = '<li class="list-group-item text-muted">No recent calculations</li>';
+    }
+    monthlyTotal.textContent = `₱${total.toFixed(2)}`;
+  } catch (err) {
+    console.error(err);
+  }
+}
 
-  result.innerHTML =
-    `${appliance} - ${type} - ${model}:<br>` +
-    `Cost/day = ₱${trim(costPerDay)}<br>` +
-    `Cost/week = ₱${trim(costPerWeek)}<br>` +
-    `Cost/month = ₱${trim(costPerMonth)}`;
-  
-  historyItems.unshift(`${model} - ₱${trim(costPerMonth, 2)}/month`);
-  if (historyItems.length > 3) historyItems.pop();
-  renderHistory();
-
-  total += costPerMonth;
-  monthlyTotal.textContent = `₱${trim(total, 2)}`;
-
-  form.reset();
-  typeSelect.innerHTML = '<option value="">-- Select Type --</option>';
-  typeSelect.disabled = true;
-  modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
-  modelSelect.disabled = true;
-});
-
-clearForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  historyItems = [];
-  total = 0;
-  renderHistory();
-  monthlyTotal.textContent = "₱0.00";
-  result.textContent = "";
-});
-
+// ---------- Render history ----------
 function renderHistory() {
   historyList.innerHTML = "";
   if (historyItems.length === 0) {
-    historyList.innerHTML =
-      '<li class="list-group-item text-muted">No recent calculations</li>';
+    historyList.innerHTML = '<li class="list-group-item text-muted">No recent calculations</li>';
     return;
   }
-  historyItems.forEach((item) => {
+  historyItems.forEach(item => {
     const li = document.createElement("li");
     li.className = "list-group-item";
     li.textContent = item;
@@ -284,3 +270,103 @@ function renderHistory() {
   });
 }
 
+// ---------- Init Calculator Page ----------
+async function initCalculatorPage() {
+  const applianceSelect = document.getElementById("appliance");
+  const typeSelect = document.getElementById("type");
+  const modelSelect = document.getElementById("model");
+  const form = document.getElementById("calcForm");
+  const result = document.getElementById("result");
+  const historyList = document.getElementById("history");
+  const monthlyTotal = document.getElementById("monthlyTotal");
+  const clearForm = document.getElementById("clearForm");
+
+  if (!form) return;
+
+  const user = getUserInfo();
+  if (!user || !user.id) return;
+
+  // --- Load backend history ---
+  await loadCalculationHistory(user.id);
+
+  // --- Cascading dropdowns ---
+  applianceSelect.addEventListener("change", () => {
+    const selected = applianceSelect.value;
+    typeSelect.innerHTML = '<option value="">-- Select Type --</option>';
+    modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
+    modelSelect.disabled = true;
+
+    if (selected && applianceData[selected]) {
+      Object.keys(applianceData[selected]).forEach(t => {
+        const opt = document.createElement("option");
+        opt.value = t;
+        opt.textContent = t;
+        typeSelect.appendChild(opt);
+      });
+      typeSelect.disabled = false;
+    } else typeSelect.disabled = true;
+  });
+
+  typeSelect.addEventListener("change", () => {
+    const appliance = applianceSelect.value;
+    const type = typeSelect.value;
+    modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
+
+    if (appliance && type && applianceData[appliance][type]) {
+      applianceData[appliance][type].forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = m;
+        modelSelect.appendChild(opt);
+      });
+      modelSelect.disabled = false;
+    } else modelSelect.disabled = true;
+  });
+
+  modelSelect.addEventListener("change", () => {
+    const selectedModel = modelSelect.value;
+    if (applianceDefaults[selectedModel]) {
+      document.getElementById("wattage").value = applianceDefaults[selectedModel].wattage;
+      document.getElementById("hours").value = applianceDefaults[selectedModel].hours;
+      document.getElementById("rate").value = applianceDefaults[selectedModel].rate;
+    }
+  });
+
+  // --- Form submit ---
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const appliance = applianceSelect.value;
+    const type = typeSelect.value;
+    const model = modelSelect.value;
+    const wattage = parseFloat(document.getElementById("wattage").value);
+    const hours = parseFloat(document.getElementById("hours").value);
+    const rate = parseFloat(document.getElementById("rate").value);
+
+    if (!appliance || !type || !model || isNaN(wattage) || isNaN(hours) || isNaN(rate)) {
+      alert("Complete all fields correctly.");
+      return;
+    }
+
+    await saveCalculation(user.id, appliance, type, model, wattage, hours, rate);
+    await loadCalculationHistory(user.id);
+
+    const dailyKWh = (wattage / 1000) * hours;
+    const dailyCost = dailyKWh * rate;
+    const monthlyCost = dailyCost * 30;
+    result.textContent = `Daily Cost: ₱${dailyCost.toFixed(2)}, Monthly Cost: ₱${monthlyCost.toFixed(2)}`;
+
+    form.reset();
+    typeSelect.innerHTML = '<option value="">-- Select Type --</option>';
+    typeSelect.disabled = true;
+    modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
+    modelSelect.disabled = true;
+  });
+
+  // --- Clear button ---
+  clearForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    await fetch(`https://wattwatch-backend.onrender.com/api/calculation/clear/${user.id}`, { method: "DELETE" });
+    await loadCalculationHistory(user.id);
+    result.textContent = "";
+  });
+}
