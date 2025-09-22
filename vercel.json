@@ -7,7 +7,6 @@
     { "source": "/forgot-password.html", "destination": "/forgot-password", "permanent": true }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/user.html" },
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/main", "destination": "/user.html" },
     { "source": "/login", "destination": "/index.html" },
