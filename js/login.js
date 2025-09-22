@@ -81,43 +81,14 @@ loginBtn.addEventListener("click", signIn);
 
 // ----------------- GOOGLE LOGIN -----------------
 googleLoginBtn.addEventListener("click", () => {
-  google.accounts.id.initialize({
-    client_id: "988525355387-trr9q5aoejn7l83o822mk6689g85j87m.apps.googleusercontent.com",
-    callback: handleGoogleCredentialResponse
-  });
-  google.accounts.id.prompt(); // triggers Google One Tap / popup
+  const clientId = "988525355387-trr9q5aoejn7l83o822mk6689g85j87m.apps.googleusercontent.com";
+  const redirectUri = "https://watt-watch.vercel.app/google-callback.html";
+  const scope = "openid profile email";
+  const responseType = "code";
+  const prompt = "select_account";
+
+  const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${encodeURIComponent(scope)}&prompt=${prompt}`;
+
+  window.open(oauthUrl, "_blank");
 });
-
-async function handleGoogleCredentialResponse(response) {
-  try {
-    const res = await fetch("https://wattwatch-backend.onrender.com/api/auth/google-login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: response.credential })
-    });
-    const data = await res.json();
-
-    if (data.success) {
-      const userData = {
-        id: data.id,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        page: data.page
-      };
-      setUserInfo(userData, true); // always remember Google login
-
-      if (typeof loadSettings === "function") {
-        try { await loadSettings(); } catch (err) { console.warn("Failed to load settings after Google login:", err); }
-      }
-
-      if (data.page) window.location.href = data.page;
-    } else {
-      showMessage(data.message || "Google login failed");
-    }
-  } catch (err) {
-    showMessage("Google login failed. Please try again later.");
-    console.error(err);
-  }
-}
 
