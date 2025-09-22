@@ -4,13 +4,17 @@
     { "source": "/user.html", "destination": "/main", "permanent": true },
     { "source": "/index.html", "destination": "/login", "permanent": true },
     { "source": "/register.html", "destination": "/register", "permanent": true },
-    { "source": "/forgot-password.html", "destination": "/forgot-password", "permanent": true }
+    { "source": "/forgot-password.html", "destination": "/forgot-password", "permanent": true },
+    { "source": "/404.html", "destination": "/error", "permanent": true }
   ],
   "rewrites": [
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/main", "destination": "/user.html" },
     { "source": "/login", "destination": "/index.html" },
     { "source": "/register", "destination": "/register.html" },
-    { "source": "/forgot-password", "destination": "/forgot-password.html" }
+    { "source": "/forgot-password", "destination": "/forgot-password.html" },
+    { "source": "/error", "destination": "/404.html" },
+    
+    { "source": "/:path*", "destination": "/404.html" }
   ]
 }
