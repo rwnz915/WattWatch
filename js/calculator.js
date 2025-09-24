@@ -162,42 +162,54 @@ document.querySelectorAll(".only-numbers").forEach((input) => {
   });
 });
 
-// ---------- Cascading dropdowns ----------
-function initDropdowns() {
+// Cascading dropdowns with visibility toggle
+function setupCascadingDropdowns() {
+  const applianceSelect = document.getElementById("appliance");
+  const typeSelect = document.getElementById("type");
+  const modelSelect = document.getElementById("model");
+
+  const typeGroup = document.getElementById("type-group");
+  const modelGroup = document.getElementById("model-group");
+
   applianceSelect.addEventListener("change", () => {
-    const selected = applianceSelect.value;
+    const selectedAppliance = applianceSelect.value;
     typeSelect.innerHTML = '<option value="">-- Select Type --</option>';
     modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
+    typeSelect.disabled = true;
     modelSelect.disabled = true;
+    modelGroup.style.display = "none";
 
-    if (selected && applianceData[selected]) {
-      Object.keys(applianceData[selected]).forEach((t) => {
+    if (selectedAppliance && applianceData[selectedAppliance]) {
+      Object.keys(applianceData[selectedAppliance]).forEach(type => {
         const opt = document.createElement("option");
-        opt.value = t;
-        opt.textContent = t;
+        opt.value = type;
+        opt.textContent = type;
         typeSelect.appendChild(opt);
       });
       typeSelect.disabled = false;
+      typeGroup.style.display = "block";
     } else {
-      typeSelect.disabled = true;
+      typeGroup.style.display = "none";
     }
   });
 
   typeSelect.addEventListener("change", () => {
-    const appliance = applianceSelect.value;
-    const type = typeSelect.value;
+    const selectedAppliance = applianceSelect.value;
+    const selectedType = typeSelect.value;
     modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
+    modelSelect.disabled = true;
 
-    if (appliance && type && applianceData[appliance][type]) {
-      applianceData[appliance][type].forEach((m) => {
+    if (selectedAppliance && selectedType && applianceData[selectedAppliance][selectedType]) {
+      applianceData[selectedAppliance][selectedType].forEach(model => {
         const opt = document.createElement("option");
-        opt.value = m;
-        opt.textContent = m;
+        opt.value = model;
+        opt.textContent = model;
         modelSelect.appendChild(opt);
       });
       modelSelect.disabled = false;
+      modelGroup.style.display = "block";
     } else {
-      modelSelect.disabled = true;
+      modelGroup.style.display = "none";
     }
   });
 
@@ -286,6 +298,7 @@ function renderHistory() {
 
 // ---------- Init Calculator Page ----------
 async function initCalculatorPage() {
+  setupCascadingDropdowns();
   const applianceSelect = document.getElementById("appliance");
   const typeSelect = document.getElementById("type");
   const modelSelect = document.getElementById("model");
@@ -349,6 +362,10 @@ async function initCalculatorPage() {
   // --- Form submit ---
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    typeGroup.style.display = "none";
+    modelGroup.style.display = "none";
+    typeSelect.disabled = true;
+    modelSelect.disabled = true;
     const appliance = applianceSelect.value;
     const type = typeSelect.value;
     const model = modelSelect.value;
@@ -360,7 +377,7 @@ async function initCalculatorPage() {
       alert("Complete all fields correctly.");
       return;
     }
-    
+
     AppState.clearCalculator();
     await saveCalculation(user.id, appliance, type, model, wattage, hours, rate);
     await loadCalculationHistory(user.id);
