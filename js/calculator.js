@@ -362,10 +362,9 @@ async function initCalculatorPage() {
   // --- Form submit ---
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    typeGroup.style.display = "none";
-    modelGroup.style.display = "none";
-    typeSelect.disabled = true;
-    modelSelect.disabled = true;
+    const appliance = applianceSelect.value;
+    const type = typeSelect.value;
+    const model = modelSelect.value;
     const wattage = parseFloat(document.getElementById("wattage").value);
     const hours = parseFloat(document.getElementById("hours").value);
     const rate = parseFloat(document.getElementById("rate").value);
