@@ -163,6 +163,7 @@ function initDashboardPage() {
     //AppState.onCalculatorChange(() => {
         renderTopAppliances();
         renderAppliancePieChart();
+        renderUsageChart();
     //});
 
 }
