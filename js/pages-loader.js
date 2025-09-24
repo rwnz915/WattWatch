@@ -40,6 +40,13 @@ async function loadPage(page, pushState = true) {
           initCalculatorPage();
       }
 
+      if (typeof initGoalsPage === "function") {
+        const form = document.getElementById("energyGoalsForm");
+        if (form) form.addEventListener("submit", saveGoals);
+        initGoalsPage();
+      }
+
+
       if (page.includes("dashboard.html") && typeof initDashboardPage === "function") {
           initDashboardPage();
       }

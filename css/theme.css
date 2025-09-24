@@ -14,8 +14,20 @@ html.dark-mode .bg-white {
 /* Cards */
 html.dark-mode .card {
     background-color: #2c2c2c !important;
-    border-color: #444 !important;
+
+    /* darken all sides except left (default fallback) */
+    border-top: 1px solid #444 !important;
+    border-right: 1px solid #444 !important;
+    border-bottom: 1px solid #444 !important;
+    border-left: 1px solid #444 !important;
 }
+
+/* Keep Bootstrap border-left-* utility colors */
+html.dark-mode .card.border-left-primary    { border-left: .25rem solid #4e73df !important; }
+html.dark-mode .card.border-left-success    { border-left: .25rem solid #1cc88a !important; }
+html.dark-mode .card.border-left-info       { border-left: .25rem solid #36b9cc !important; }
+html.dark-mode .card.border-left-warning    { border-left: .25rem solid #f6c23e !important; }
+html.dark-mode .card.border-left-danger     { border-left: .25rem solid #e74a3b !important; }
 
 /* Card headers */
 html.dark-mode .card-header {

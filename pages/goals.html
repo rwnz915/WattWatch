@@ -1,34 +1,30 @@
-<title>WattWatch - Energy Goals </title>
+<title>WattWatch - Energy Goals</title>
 
 <div class="container-fluid">
-
-    <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">Energy Goals</h1>
-
-    <!-- Energy Goals Card -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Set Your Monthly Goals</h6>
-        </div>
-        <div class="card-body">
-            <form>
-                <div class="form-group">
-                    <label for="targetBill">Target Monthly Bill (₱)</label>
-                    <input type="number" class="form-control" id="targetBill" placeholder="e.g., 2000">
-                </div>
-                <div class="form-group">
-                    <label for="targetUsage">Target Energy Usage (kWh)</label>
-                    <input type="number" class="form-control" id="targetUsage" placeholder="e.g., 350">
-                </div>
-                <div class="form-group">
-                    <label for="goalDate">Goal Deadline</label>
-                    <input type="date" class="form-control" id="goalDate">
-                </div>
-                <button type="submit" class="btn btn-primary">Save Goal</button>
-            </form>
-        </div>
+  <h1 class="h3 mb-4 text-gray-800">Energy Goals</h1>
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Set Your Monthly Goals</h6>
     </div>
-
+    <div class="card-body">
+      <form id="energyGoalsForm">
+        <div class="form-group">
+          <label for="targetBill">Target Monthly Bill (₱)</label>
+          <input type="number" class="form-control" id="targetBill" placeholder="e.g., 2000">
+        </div>
+        <div class="form-group">
+          <label for="targetUsage">Target Energy Usage (kWh)</label>
+          <input type="number" class="form-control" id="targetUsage" placeholder="e.g., 350">
+        </div>
+        <div class="form-group">
+          <label for="goalDate">Goal Deadline</label>
+          <input type="date" class="form-control" id="goalDate">
+        </div>
+        <button id="saveGoals" type="submit" class="btn btn-primary">Save Goal</button>
+      </form>
+    </div>
+  </div>
 </div>
 
 <!-- scripts -->
+<script src="js/goals.js"></script>
