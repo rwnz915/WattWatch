@@ -21,6 +21,39 @@ function animateValue(el, start, end, duration, prefix = "", suffix = "") {
     requestAnimationFrame(step);
 }
 
+function renderTopAppliances() {
+    const container = document.getElementById("topAppliancesContainer");
+    container.innerHTML = "";
+
+    const calcu = AppState.getCalculator();
+    if (!calcu.items || calcu.items.length === 0) {
+        container.innerHTML = "<p class='text-muted'>No appliances added</p>";
+        return;
+    }
+
+    // Sort items by wattage descending
+    const sorted = [...calcu.items].sort((a, b) => b.wattage - a.wattage);
+
+    sorted.forEach(item => {
+        // Calculate percentage of total wattage
+        const totalWattage = calcu.items.reduce((sum, i) => sum + i.wattage, 0);
+        const percent = totalWattage > 0 ? Math.round((item.wattage / totalWattage) * 100) : 0;
+
+        // Choose color based on rank
+        const colors = ["info", "success", "warning", "danger"];
+        const color = colors[Math.min(sorted.indexOf(item), colors.length - 1)];
+
+        container.innerHTML += `
+            <h4 class="small font-weight-bold">
+                ${item.appliance} <span class="float-right">${percent}%</span>
+            </h4>
+            <div class="progress mb-4">
+                <div class="progress-bar bg-${color}" style="width: ${percent}%"></div>
+            </div>
+        `;
+    });
+}
+
 function initDashboardPage() {
     AppState.loadGoals();
     AppState.loadCalculator();
@@ -70,5 +103,10 @@ function initDashboardPage() {
         goalCard.classList.add("border-left-danger");
         goalTitle.classList.add("text-danger");
     }
+
+    //AppState.onCalculatorChange(() => {
+        renderTopAppliances();
+    //});
+
 }
 

@@ -3,23 +3,15 @@ window.AppState = {
   calculator: { items: [], totalCostMonth: 0, totalKwhMonth: 0 },
   goals: { targetBill: 0, targetUsage: 0, goalDate: "" },
 
+  // Listeners for changes
+  _calculatorListeners: [],
+  _goalsListeners: [],
+
   // ---------------- CALCULATOR ----------------
   addCalculator(applianceData) {
     this.calculator.items.push(applianceData);
-
-    // Recalculate totals
-    this.calculator.totalKwhMonth = this.calculator.items.reduce((sum, item) => {
-      const dailyKwh = item.wattage / 1000 * item.hours;
-      return sum + dailyKwh * 30;
-    }, 0);
-
-    this.calculator.totalCostMonth = this.calculator.items.reduce((sum, item) => {
-      const dailyKwh = item.wattage / 1000 * item.hours;
-      const dailyCost = dailyKwh * item.rate;
-      return sum + dailyCost * 30;
-    }, 0);
-
-    this.saveCalculator();
+    this._recalculateCalculator();
+    this._notifyCalculatorChange();
   },
 
   getCalculator() {
@@ -29,15 +21,40 @@ window.AppState = {
   loadCalculator() {
     const saved = JSON.parse(localStorage.getItem("AppState_Calculator"));
     if (saved) this.calculator = saved;
+    this._notifyCalculatorChange();
   },
 
   clearCalculator() {
     this.calculator = { items: [], totalCostMonth: 0, totalKwhMonth: 0 };
     this.saveCalculator();
+    this._notifyCalculatorChange();
   },
 
   saveCalculator() {
     localStorage.setItem("AppState_Calculator", JSON.stringify(this.calculator));
+  },
+
+  _recalculateCalculator() {
+    this.calculator.totalKwhMonth = this.calculator.items.reduce((sum, item) => {
+      const dailyKwh = (item.wattage / 1000) * item.hours;
+      return sum + dailyKwh * 30;
+    }, 0);
+
+    this.calculator.totalCostMonth = this.calculator.items.reduce((sum, item) => {
+      const dailyKwh = (item.wattage / 1000) * item.hours;
+      const dailyCost = dailyKwh * item.rate;
+      return sum + dailyCost * 30;
+    }, 0);
+
+    this.saveCalculator();
+  },
+
+  onCalculatorChange(callback) {
+    if (typeof callback === "function") this._calculatorListeners.push(callback);
+  },
+
+  _notifyCalculatorChange() {
+    this._calculatorListeners.forEach(cb => cb(this.calculator));
   },
 
   // ---------------- GOALS ----------------
@@ -48,6 +65,7 @@ window.AppState = {
       goalDate: goals.goalDate || ""
     };
     this.saveGoals();
+    this._notifyGoalsChange();
   },
 
   getGoals() {
@@ -57,15 +75,25 @@ window.AppState = {
   loadGoals() {
     const saved = JSON.parse(localStorage.getItem("AppState_Goals"));
     if (saved) this.goals = saved;
+    this._notifyGoalsChange();
   },
 
   clearGoals() {
     this.goals = { targetBill: 0, targetUsage: 0, goalDate: "" };
     this.saveGoals();
+    this._notifyGoalsChange();
   },
 
   saveGoals() {
     localStorage.setItem("AppState_Goals", JSON.stringify(this.goals));
+  },
+
+  onGoalsChange(callback) {
+    if (typeof callback === "function") this._goalsListeners.push(callback);
+  },
+
+  _notifyGoalsChange() {
+    this._goalsListeners.forEach(cb => cb(this.goals));
   }
 };
 
@@ -76,7 +104,6 @@ async function updateAppStateCalculations(userId) {
     if (!res.ok) throw new Error("Failed to fetch history");
     const data = await res.json();
 
-    // Reset calculator
     AppState.clearCalculator();
 
     if (data && data.length > 0) {
@@ -92,7 +119,7 @@ async function updateAppStateCalculations(userId) {
       });
     }
 
-    console.log("AppState totals after login:", AppState.getCalculator());
+    console.log("AppState totals after update:", AppState.getCalculator());
   } catch (err) {
     console.error("Failed to update AppState calculations:", err);
   }
@@ -104,7 +131,6 @@ async function updateAppStateGoals(userId) {
     if (!res.ok) throw new Error("Failed to fetch goals");
     const data = await res.json();
 
-    // Update AppState + save to separate localStorage
     AppState.setGoals({
       targetBill: parseFloat(data.targetBill) || 0,
       targetUsage: parseFloat(data.targetUsage) || 0,
