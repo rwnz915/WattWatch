@@ -362,10 +362,6 @@ async function initCalculatorPage() {
   // --- Form submit ---
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    typeGroup.style.display = "none";
-    modelGroup.style.display = "none";
-    typeSelect.disabled = true;
-    modelSelect.disabled = true;
     const appliance = applianceSelect.value;
     const type = typeSelect.value;
     const model = modelSelect.value;
@@ -377,7 +373,7 @@ async function initCalculatorPage() {
       alert("Complete all fields correctly.");
       return;
     }
-
+    
     AppState.clearCalculator();
     await saveCalculation(user.id, appliance, type, model, wattage, hours, rate);
     await loadCalculationHistory(user.id);
