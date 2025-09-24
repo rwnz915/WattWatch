@@ -93,30 +93,23 @@
             </div>
         </div>
 
-        <!-- Pie Chart -->
-        <div class="col-xl-4 col-lg-5">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Daily Usage Patterns</h6>
-                </div>
-                <div class="card-body">
-                    <div class="chart-pie pt-4 pb-2">
-                        <canvas id="myPieChart"></canvas>
-                    </div>
-                    <div class="mt-4 text-center small">
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-primary"></i> Weekdays
-                        </span>
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-success"></i> Weekends
-                        </span>
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-info"></i> Other
-                        </span>
-                    </div>
-                </div>
+        <!-- Appliance Usage Pie Chart -->
+<div class="col-xl-4 col-lg-5">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Appliance Usage Share</h6>
+        </div>
+        <div class="card-body">
+            <div class="chart-pie pt-4 pb-2">
+                <canvas id="appliancePieChart"></canvas>
+            </div>
+            <div id="applianceLegend" class="mt-4 text-center small">
+                <!-- dynamic legend -->
             </div>
         </div>
+    </div>
+</div>
+
     </div>
 
     <!-- Extra Row -->

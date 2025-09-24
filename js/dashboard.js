@@ -21,6 +21,60 @@ function animateValue(el, start, end, duration, prefix = "", suffix = "") {
     requestAnimationFrame(step);
 }
 
+let appliancePieChart;
+
+function renderAppliancePieChart() {
+    const calcu = AppState.getCalculator();
+    const container = document.getElementById("applianceLegend");
+
+    if (!calcu.items || calcu.items.length === 0) {
+        if (appliancePieChart) appliancePieChart.destroy();
+        container.innerHTML = "<p class='text-muted'>No appliances added</p>";
+        return;
+    }
+
+    const sorted = [...calcu.items].sort((a, b) => b.wattage - a.wattage);
+
+    const labels = sorted.map(a => a.appliance);
+    const data = sorted.map(a => Math.round((a.wattage / 1000) * a.hours * 30 * a.rate));
+    const colors = ["#4e73df", "#1cc88a", "#36b9cc", "#f6c23e", "#e74a3b", "#858796"];
+
+    // Create legend
+    container.innerHTML = labels.map((label, i) => `
+        <span class="mr-2">
+            <i class="fas fa-circle" style="color:${colors[i % colors.length]}"></i> ${label}
+        </span>
+    `).join(" ");
+
+    if (appliancePieChart) appliancePieChart.destroy();
+
+    const ctx = document.getElementById("appliancePieChart").getContext("2d");
+    appliancePieChart = new Chart(ctx, {
+        type: "pie",
+        data: {
+            labels,
+            datasets: [{
+                data,
+                backgroundColor: labels.map((_, i) => colors[i % colors.length]),
+                hoverBackgroundColor: labels.map((_, i) => colors[i % colors.length]),
+                hoverBorderColor: "rgba(234, 236, 244, 1)"
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+                callbacks: {
+                    label: function (tooltipItem, data) {
+                        const kwh = data.datasets[0].data[tooltipItem.index];
+                        return `${data.labels[tooltipItem.index]}: ₱${kwh.toLocaleString()}`;
+                    }
+                }
+            },
+            legend: { display: false }
+        }
+    });
+}
+
 function renderTopAppliances() {
     const container = document.getElementById("topAppliancesContainer");
     container.innerHTML = "";
@@ -108,6 +162,7 @@ function initDashboardPage() {
 
     //AppState.onCalculatorChange(() => {
         renderTopAppliances();
+        renderAppliancePieChart();
     //});
 
 }
