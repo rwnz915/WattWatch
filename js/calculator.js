@@ -360,7 +360,8 @@ async function initCalculatorPage() {
       alert("Complete all fields correctly.");
       return;
     }
-
+    
+    AppState.clearCalculator();
     await saveCalculation(user.id, appliance, type, model, wattage, hours, rate);
     await loadCalculationHistory(user.id);
 
