@@ -383,12 +383,22 @@ async function initCalculatorPage() {
     const monthlyCost = dailyCost * 30;
     result.textContent = `Daily Cost: ₱${dailyCost.toFixed(2)}, Monthly Cost: ₱${monthlyCost.toFixed(2)}`;
 
+    // ✅ Reset form fields
     form.reset();
-    typeSelect.innerHTML = '<option value="">-- Select Type --</option>';
+
+    // ✅ Hide Type and Model groups again
+    document.getElementById("type-group").style.display = "none";
+    document.getElementById("model-group").style.display = "none";
+
+    // ✅ Disable Type and Model dropdowns
     typeSelect.disabled = true;
-    modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
     modelSelect.disabled = true;
+
+    // Reset dropdown options
+    typeSelect.innerHTML = '<option value="">-- Select Type --</option>';
+    modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
   });
+
 
   // --- Clear button ---
   clearForm.addEventListener("submit", async (e) => {
