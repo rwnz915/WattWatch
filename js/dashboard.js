@@ -34,18 +34,20 @@ function renderTopAppliances() {
     // Sort items by wattage descending
     const sorted = [...calcu.items].sort((a, b) => b.wattage - a.wattage);
 
-    sorted.forEach(item => {
-        // Calculate percentage of total wattage
-        const totalWattage = calcu.items.reduce((sum, i) => sum + i.wattage, 0);
+    // Total wattage for percentage calculation
+    const totalWattage = calcu.items.reduce((sum, i) => sum + i.wattage, 0);
+
+    sorted.forEach((item, index) => {
         const percent = totalWattage > 0 ? Math.round((item.wattage / totalWattage) * 100) : 0;
 
-        // Choose color based on rank
+        const monthlyKwh = ((item.wattage / 1000) * item.hours * 30).toFixed(2);
+
         const colors = ["info", "success", "warning", "danger"];
-        const color = colors[Math.min(sorted.indexOf(item), colors.length - 1)];
+        const color = colors[Math.min(index, colors.length - 1)];
 
         container.innerHTML += `
             <h4 class="small font-weight-bold">
-                ${item.appliance} <span class="float-right">${percent}%</span>
+                ${item.appliance} (${monthlyKwh} kWh) <span class="float-right">${percent}%</span>
             </h4>
             <div class="progress mb-4">
                 <div class="progress-bar bg-${color}" style="width: ${percent}%"></div>
