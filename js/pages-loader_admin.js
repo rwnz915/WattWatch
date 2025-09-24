@@ -77,7 +77,7 @@ window.addEventListener("popstate", (event) => {
 });*/
 
 document.addEventListener("DOMContentLoaded", function () {
-  const savedPage = localStorage.getItem("currentPage_Admin") || "pages/dashboard_admin.html";
+  const savedPage = localStorage.getItem("currentPage_Admin") || "pages/admin/dashboard_admin.html";
   loadPage(savedPage);
 
   // Active nav highlight
