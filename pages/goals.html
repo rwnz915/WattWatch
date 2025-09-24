@@ -22,9 +22,14 @@
           </div>
 
           <!-- Goal Date -->
-          <div class="form-group">
+          <div class="form-group" id="goalDateWrapper" style="cursor: pointer;">
             <label for="goalDate">Goal Deadline</label>
-            <input type="date" class="form-control" id="goalDate" required>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="goalDate" 
+              placeholder="Select a date" 
+              required>
           </div>
 
           <button id="saveGoals" type="submit" class="btn btn-primary">Save Goal</button>
@@ -52,4 +57,23 @@
 </div>
 
 <!-- scripts -->
+ <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="js/goals.js"></script>
+
+<script>
+  flatpickr("#goalDate", {
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    defaultDate: "today",
+    onChange: function(selectedDates, dateStr) {
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      const selected = selectedDates[0];
+      if (selected < today) {
+        showMessage("You cannot select a past date.", "danger");
+        this.clear();
+      }
+    }
+  });
+</script>
