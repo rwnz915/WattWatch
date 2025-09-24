@@ -145,6 +145,38 @@ const applianceDefaults = {
   "Philips Tornado 15W": { wattage: 15, hours: 6, rate: 12 }
 };
 
+// ---------- LocalStorage-based State Management (replaces AppState) ----------
+class LocalState {
+  constructor(key) {
+    this.key = key;
+  }
+
+  add(item) {
+    let items = this.get();
+    items.push(item);
+    localStorage.setItem(this.key, JSON.stringify(items));
+  }
+
+  get() {
+    return JSON.parse(localStorage.getItem(this.key) || '[]');
+  }
+
+  clear() {
+    localStorage.removeItem(this.key);
+  }
+
+  getTotalMonthlyCost() {
+    const items = this.get();
+    return items.reduce((total, item) => {
+      const dailyKWh = (item.wattage / 1000) * item.hours;
+      const dailyCost = dailyKWh * item.rate;
+      return total + (dailyCost * 30);
+    }, 0);
+  }
+}
+
+const calcState = new LocalState('wattwatch_calcs');
+
 // ---------- DOM elements ----------
 const applianceSelect = document.getElementById("appliance");
 const typeSelect = document.getElementById("type");
@@ -158,196 +190,98 @@ const clearForm = document.getElementById("clearForm");
 // ---------- Prevent invalid number inputs ----------
 document.querySelectorAll(".only-numbers").forEach((input) => {
   input.addEventListener("keydown", (e) => {
-    if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
+    // Prevent scientific notation and negative signs for positive numbers
+    if (["e", "E", "+", "-"].includes(e.key) && e.key !== "+") {
+      e.preventDefault();
+    }
+  });
+  // Also handle paste events for numbers only
+  input.addEventListener("paste", (e) => {
+    e.preventDefault();
+    const paste = (e.clipboardData || window.clipboardData).getData('text');
+    const numbersOnly = paste.replace(/[^0-9.]/g, '');
+    e.target.value = numbersOnly;
   });
 });
 
-// ---------- Cascading dropdowns ----------
-function initDropdowns() {
-  applianceSelect.addEventListener("change", () => {
-    const selected = applianceSelect.value;
-    typeSelect.innerHTML = '<option value="">-- Select Type --</option>';
-    modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
-    modelSelect.disabled = true;
-
-    if (selected && applianceData[selected]) {
-      Object.keys(applianceData[selected]).forEach((t) => {
-        const opt = document.createElement("option");
-        opt.value = t;
-        opt.textContent = t;
-        typeSelect.appendChild(opt);
-      });
-      typeSelect.disabled = false;
-    } else {
-      typeSelect.disabled = true;
-    }
-  });
-
-  typeSelect.addEventListener("change", () => {
-    const appliance = applianceSelect.value;
-    const type = typeSelect.value;
-    modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
-
-    if (appliance && type && applianceData[appliance][type]) {
-      applianceData[appliance][type].forEach((m) => {
-        const opt = document.createElement("option");
-        opt.value = m;
-        opt.textContent = m;
-        modelSelect.appendChild(opt);
-      });
-      modelSelect.disabled = false;
-    } else {
-      modelSelect.disabled = true;
-    }
-  });
-
-  modelSelect.addEventListener("change", () => {
-    const selectedModel = modelSelect.value;
-    if (applianceDefaults[selectedModel]) {
-      document.getElementById("wattage").value = applianceDefaults[selectedModel].wattage;
-      document.getElementById("hours").value = applianceDefaults[selectedModel].hours;
-      document.getElementById("rate").value = applianceDefaults[selectedModel].rate;
-    }
-  });
+// ---------- Cascading dropdowns (non-duplicated, efficient) ----------
+function setupDropdowns() {
+  applianceSelect.addEventListener("change", updateTypes);
+  typeSelect.addEventListener("change", updateModels);
+  modelSelect.addEventListener("change", loadDefaults);
 }
 
-// ---------- Calculator ----------
-let total = 0;
-let historyItems = [];
+function updateTypes() {
+  const selectedAppliance = applianceSelect.value;
+  typeSelect.innerHTML = '<option value="">-- Select Type --</option>';
+  modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
+  modelSelect.disabled = true;
+  typeSelect.disabled = true;
 
-async function saveCalculation(userId, appliance, type, model, wattage, hours, rate) {
-  try {
-    await fetch("https://wattwatch-backend.onrender.com/api/calculation/save", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, appliance, type, model, wattage, hours, rate })
+  if (selectedAppliance && applianceData[selectedAppliance]) {
+    Object.keys(applianceData[selectedAppliance]).forEach((type) => {
+      const option = document.createElement("option");
+      option.value = type;
+      option.textContent = type;
+      typeSelect.appendChild(option);
     });
-  } catch (err) {
-    console.error(err);
+    typeSelect.disabled = false;
   }
 }
 
-async function loadCalculationHistory(userId) {
-  try {
-    const res = await fetch(`https://wattwatch-backend.onrender.com/api/calculation/history/${userId}`);
-    if (!res.ok) throw new Error("Failed to fetch history");
-    const data = await res.json();
+function updateModels() {
+  const selectedAppliance = applianceSelect.value;
+  const selectedType = typeSelect.value;
+  modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
+  modelSelect.disabled = true;
 
-    const historyList = document.getElementById("history");
-    const monthlyTotal = document.getElementById("monthlyTotal");
-    historyList.innerHTML = "";
-    let total = 0;
-    //let khwtotal = 0;
-
-    if (data && data.length > 0) {
-      data.forEach(item => {
-        const li = document.createElement("li");
-        li.className = "list-group-item";
-        li.textContent = `${item.appliance} ${item.model} - ₱${parseFloat(item.costMonth).toFixed(2)}/month`;
-        historyList.appendChild(li);
-        total += parseFloat(item.costMonth);
-        //let kwhDay = (item.wattage / 1000) * item.hours;
-        //khwtotal = kwhDay * 30;
-        AppState.addCalculator({
-          appliance: item.appliance,
-          type: item.type,
-          model: item.model,
-          wattage: item.wattage,
-          hours: item.hours,
-          rate: item.rate
-        });
-
-        //const allCalculations = AppState.getCalculator();
-        //console.log("All calculations: ", allCalculations);
-      });
-    } else {
-      historyList.innerHTML = '<li class="list-group-item text-muted">No recent calculations</li>';
-    }
-    monthlyTotal.textContent = `₱${total.toFixed(2)}`;
-  } catch (err) {
-    console.error(err);
+  if (selectedAppliance && selectedType && applianceData[selectedAppliance][selectedType]) {
+    applianceData[selectedAppliance][selectedType].forEach((model) => {
+      const option = document.createElement("option");
+      option.value = model;
+      option.textContent = model;
+      modelSelect.appendChild(option);
+    });
+    modelSelect.disabled = false;
   }
 }
 
-// ---------- Render history ----------
-function renderHistory() {
+function loadDefaults() {
+  const selectedModel = modelSelect.value;
+  const defaults = applianceDefaults[selectedModel];
+  if (defaults) {
+    document.getElementById("wattage").value = defaults.wattage;
+    document.getElementById("hours").value = defaults.hours;
+    document.getElementById("rate").value = defaults.rate;
+  }
+}
+
+// ---------- Load history from LocalStorage ----------
+function loadHistory() {
+  const items = calcState.get();
   historyList.innerHTML = "";
-  if (historyItems.length === 0) {
+  let total = calcState.getTotalMonthlyCost();
+
+  if (items.length === 0) {
     historyList.innerHTML = '<li class="list-group-item text-muted">No recent calculations</li>';
-    return;
+  } else {
+    items.forEach((item) => {
+      const dailyKWh = (item.wattage / 1000) * item.hours;
+      const dailyCost = dailyKWh * item.rate;
+      const monthlyCost = dailyCost * 30;
+      const li = document.createElement("li");
+      li.className = "list-group-item";
+      li.textContent = `${item.appliance} ${item.model || item.type} - ₱${monthlyCost.toFixed(2)}/month`;
+      historyList.appendChild(li);
+    });
   }
-  historyItems.forEach(item => {
-    const li = document.createElement("li");
-    li.className = "list-group-item";
-    li.textContent = item;
-    historyList.appendChild(li);
-  });
+
+  monthlyTotal.textContent = `₱${total.toFixed(2)}`;
 }
 
-// ---------- Init Calculator Page ----------
-async function initCalculatorPage() {
-  const applianceSelect = document.getElementById("appliance");
-  const typeSelect = document.getElementById("type");
-  const modelSelect = document.getElementById("model");
-  const form = document.getElementById("calcForm");
-  const result = document.getElementById("result");
-  const historyList = document.getElementById("history");
-  const monthlyTotal = document.getElementById("monthlyTotal");
-  const clearForm = document.getElementById("clearForm");
-
-  if (!form) return;
-
-  const user = getUserInfo();
-  if (!user || !user.id) return;
-
-  // --- Load backend history ---
-  await loadCalculationHistory(user.id);
-
-  // --- Cascading dropdowns ---
-  applianceSelect.addEventListener("change", () => {
-    const selected = applianceSelect.value;
-    typeSelect.innerHTML = '<option value="">-- Select Type --</option>';
-    modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
-    modelSelect.disabled = true;
-
-    if (selected && applianceData[selected]) {
-      Object.keys(applianceData[selected]).forEach(t => {
-        const opt = document.createElement("option");
-        opt.value = t;
-        opt.textContent = t;
-        typeSelect.appendChild(opt);
-      });
-      typeSelect.disabled = false;
-    } else typeSelect.disabled = true;
-  });
-
-  typeSelect.addEventListener("change", () => {
-    const appliance = applianceSelect.value;
-    const type = typeSelect.value;
-    modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
-
-    if (appliance && type && applianceData[appliance][type]) {
-      applianceData[appliance][type].forEach(m => {
-        const opt = document.createElement("option");
-        opt.value = m;
-        opt.textContent = m;
-        modelSelect.appendChild(opt);
-      });
-      modelSelect.disabled = false;
-    } else modelSelect.disabled = true;
-  });
-
-  modelSelect.addEventListener("change", () => {
-    const selectedModel = modelSelect.value;
-    if (applianceDefaults[selectedModel]) {
-      document.getElementById("wattage").value = applianceDefaults[selectedModel].wattage;
-      document.getElementById("hours").value = applianceDefaults[selectedModel].hours;
-      document.getElementById("rate").value = applianceDefaults[selectedModel].rate;
-    }
-  });
-
-  // --- Form submit ---
-  form.addEventListener("submit", async (e) => {
+// ---------- Form submission handler ----------
+function setupForm() {
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
     const appliance = applianceSelect.value;
     const type = typeSelect.value;
@@ -356,33 +290,58 @@ async function initCalculatorPage() {
     const hours = parseFloat(document.getElementById("hours").value);
     const rate = parseFloat(document.getElementById("rate").value);
 
-    if (!appliance || !type || !model || isNaN(wattage) || isNaN(hours) || isNaN(rate)) {
-      alert("Complete all fields correctly.");
+    if (!appliance || !type || isNaN(wattage) || isNaN(hours) || isNaN(rate)) {
+      alert("Please complete all required fields with valid numbers.");
       return;
     }
-    
-    AppState.clearCalculator();
-    await saveCalculation(user.id, appliance, type, model, wattage, hours, rate);
-    await loadCalculationHistory(user.id);
 
+    // Calculate costs
     const dailyKWh = (wattage / 1000) * hours;
     const dailyCost = dailyKWh * rate;
     const monthlyCost = dailyCost * 30;
-    result.textContent = `Daily Cost: ₱${dailyCost.toFixed(2)}, Monthly Cost: ₱${monthlyCost.toFixed(2)}`;
 
+    // Save to local state
+    calcState.add({
+      appliance,
+      type,
+      model,
+      wattage,
+      hours,
+      rate
+    });
+
+    // Display result
+    result.textContent = `Daily Usage: ${dailyKWh.toFixed(2)} kWh | Daily Cost: ₱${dailyCost.toFixed(2)} | Monthly Cost: ₱${monthlyCost.toFixed(2)}`;
+
+    // Reset form
     form.reset();
-    typeSelect.innerHTML = '<option value="">-- Select Type --</option>';
     typeSelect.disabled = true;
-    modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
     modelSelect.disabled = true;
-  });
 
-  // --- Clear button ---
-  clearForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    await fetch(`https://wattwatch-backend.onrender.com/api/calculation/clear/${user.id}`, { method: "DELETE" });
-    await loadCalculationHistory(user.id);
-    result.textContent = "";
-    AppState.clearCalculator();
+    // Reload history and total
+    loadHistory();
   });
 }
+
+// ---------- Clear history handler ----------
+function setupClear() {
+  clearForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (confirm("Are you sure you want to clear all calculations?")) {
+      calcState.clear();
+      loadHistory();
+      result.textContent = "";
+    }
+  });
+}
+
+// ---------- Initialization ----------
+function init() {
+  setupDropdowns();
+  setupForm();
+  setupClear();
+  loadHistory(); // Load initial history
+}
+
+// Start the app when DOM is loaded
+document.addEventListener("DOMContentLoaded", init);

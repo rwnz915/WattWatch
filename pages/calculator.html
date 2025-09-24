@@ -11,7 +11,7 @@
           <!-- Appliance -->
           <div class="form-group">
             <label for="appliance">Appliance</label>
-            <select class="form-control" id="appliance" required>
+            <select class="form-control" id="appliance" required aria-describedby="appliance-help">
               <option value="">-- Select Appliance --</option>
               <option value="Air Conditioner">Air Conditioner</option>
               <option value="Electric Fan">Electric Fan</option>
@@ -25,106 +25,90 @@
               <option value="Water Heater">Water Heater</option>
               <option value="Lights">Lights</option>
             </select>
+            <small id="appliance-help" class="text-muted">Choose the type of appliance to calculate usage for.</small>
           </div>
 
 
           <!-- Type -->
           <div class="form-group">
             <label for="type">Type</label>
-            <select class="form-control" id="type" required disabled>
+            <select class="form-control" id="type" required disabled aria-describedby="type-help">
               <option value="">-- Select Type --</option>
             </select>
+            <small id="type-help" class="text-muted">Select the specific type of the appliance.</small>
           </div>
 
           <!-- Brand / Model -->
           <div class="form-group">
             <label for="model">Brand / Model</label>
-            <select class="form-control" id="model">
+            <select class="form-control" id="model" aria-describedby="model-help">
               <option value="">-- Select Brand / Model --</option>
             </select>
+            <small id="model-help" class="text-muted">Optional: Select a model for default values.</small>
           </div>
 
           <!-- Wattage -->
           <div class="form-group">
             <label for="wattage">Wattage (W)</label>
-            <input
-              type="number"
-              class="form-control only-numbers"
-              id="wattage"
-              placeholder="e.g., 1200"
-              min="1"
-              required
-              inputmode="decimal"
-            />
+            <input type="number" class="form-control only-numbers" id="wattage" placeholder="e.g., 1200" min="1"
+              required inputmode="decimal" aria-describedby="wattage-help" />
+            <small id="wattage-help" class="text-muted">Power consumption in watts.</small>
           </div>
 
           <!-- Hours -->
           <div class="form-group">
             <label for="hours">Hours Used per Day</label>
-            <input
-              type="number"
-              class="form-control only-numbers"
-              id="hours"
-              placeholder="e.g., 5"
-              min="0.1"
-              step="0.1"
-              required
-              inputmode="decimal"
-            />
+            <input type="number" class="form-control only-numbers" id="hours" placeholder="e.g., 5" min="0.1" step="0.1"
+              required inputmode="decimal" aria-describedby="hours-help" />
+            <small id="hours-help" class="text-muted">Average daily usage hours.</small>
           </div>
 
           <!-- Electricity Rate -->
           <div class="form-group">
             <label for="rate">Electricity Rate (₱/kWh)</label>
-            <input
-              type="number"
-              class="form-control only-numbers"
-              id="rate"
-              placeholder="e.g., 11"
-              min="0.1"
-              step="0.01"
-              required
-              inputmode="decimal"
-            />
+            <input type="number" class="form-control only-numbers" id="rate" placeholder="e.g., 11" min="0.1"
+              step="0.01" required inputmode="decimal" aria-describedby="rate-help" />
+            <small id="rate-help" class="text-muted">Your local rate per kilowatt-hour.</small>
           </div>
 
           <button type="submit" class="btn btn-primary">Calculate</button>
         </form>
         <hr />
-        <p id="result" class="text-success"></p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Right column -->
-  <div class="col-lg-4 mb-4">
-    <div class="card shadow mb-4">
-      <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-info">Recent Calculations</h6>
-      </div>
-      <div class="card-body">
-        <form id="clearForm">
-          <ul id="history" class="list-group small">
-            <li class="list-group-item text-muted">No recent calculations</li>
-          </ul>
-          <br />
-          <button type="submit" class="btn btn-outline-danger btn-sm">Clear</button>
-        </form>
+        <p id="result" class="text-success" role="alert" aria-live="polite"></p>
       </div>
     </div>
 
-    <div class="card shadow mb-4">
-      <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-warning">Monthly Total Estimate</h6>
+    <!-- Right column: History and Monthly Total -->
+    <div>
+      <!-- Recent Calculations Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Recent Calculations</h2>
+        </div>
+        <div class="card-body">
+          <form id="clearForm">
+            <ul id="history" class="list-group" role="list">
+              <li class="list-group-item text-muted">No recent calculations</li>
+            </ul>
+            <br />
+            <button type="submit" class="btn btn-outline-danger btn-sm" aria-label="Clear all calculations">Clear
+              History</button>
+          </form>
+        </div>
       </div>
-      <div class="card-body text-center">
-        <h4 id="monthlyTotal" class="text-dark">₱0.00</h4>
-        <small class="text-muted">from all added appliances</small>
+
+      <!-- Monthly Total Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Monthly Total Estimate</h2>
+        </div>
+        <div class="card-body text-center">
+          <h4 id="monthlyTotal">₱0.00</h4>
+          <small class="text-muted">from all added appliances</small>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+    </section>
 
-<script src="js/appState.js"></script>
-<script src="js/calculator.js"></script>
-
+    <script src="js/appState.js"></script>
+    <script src="js/calculator.js"></script>
