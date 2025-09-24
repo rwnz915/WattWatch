@@ -358,7 +358,6 @@ async function initCalculatorPage() {
       document.getElementById("rate").value = applianceDefaults[selectedModel].rate;
     }
   });
-
   // --- Form submit ---
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -383,11 +382,18 @@ async function initCalculatorPage() {
     const monthlyCost = dailyCost * 30;
     result.textContent = `Daily Cost: ₱${dailyCost.toFixed(2)}, Monthly Cost: ₱${monthlyCost.toFixed(2)}`;
 
+    // Reset the form
     form.reset();
+
+    // Reset selects
     typeSelect.innerHTML = '<option value="">-- Select Type --</option>';
     typeSelect.disabled = true;
     modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
     modelSelect.disabled = true;
+
+    // ✅ Hide TYPE and MODEL groups again
+    typeGroup.style.display = "none";
+    modelGroup.style.display = "none";
   });
 
   // --- Clear button ---
