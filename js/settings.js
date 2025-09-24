@@ -18,11 +18,18 @@ function applyTheme(theme) {
       document.documentElement.classList.add("dark-mode");
     }
   }
+
+  // Save to localStorage so it loads instantly next time
+  localStorage.setItem("theme", theme);
 }
 
 function initThemeSelector() {
   const themeSelect = document.getElementById("themeSelect");
   if (!themeSelect) return;
+
+  // Load from localStorage first to keep UI in sync
+  const savedTheme = localStorage.getItem("theme") || "System Default";
+  themeSelect.value = savedTheme;
 
   themeSelect.addEventListener("change", () => {
     applyTheme(themeSelect.value);
@@ -45,11 +52,18 @@ async function loadSettings() {
 
     const themeSelect = document.getElementById("themeSelect");
     const notifSelect = document.getElementById("notifSelect");
-    if (themeSelect) themeSelect.value = data.theme;
-    if (notifSelect) notifSelect.value = data.notifications ? "Enabled" : "Disabled";
 
-    applyTheme(data.theme);
+    localStorage.setItem("theme", data.theme);
 
+    if (themeSelect) {
+      themeSelect.value = data.theme;
+      applyTheme(data.theme); // sync both DOM + localStorage
+    }
+
+    if (notifSelect) {
+      notifSelect.value = data.notifications ? "Enabled" : "Disabled";
+      localStorage.setItem("notif", notifSelect.value);
+    }
   } catch (err) {
     console.error("Error loading settings:", err);
   } finally {
@@ -84,7 +98,10 @@ async function saveSettings() {
     const result = await res.json();
     console.log(result.message);
 
+    // Sync both DOM + localStorage
     applyTheme(theme);
+    localStorage.setItem("notif", notifEnabled ? "Enabled" : "Disabled");
+
     showMessage("Settings saved successfully!");
   } catch (err) {
     console.error("Error saving settings:", err);
@@ -99,4 +116,11 @@ function initSettingsPage() {
 
   const saveBtn = document.getElementById("saveBtn");
   if (saveBtn) saveBtn.addEventListener("click", saveSettings);
+
+  // React to system changes only if "System Default" is selected
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    if ((localStorage.getItem("theme") || "System Default") === "System Default") {
+      applyTheme("System Default");
+    }
+  });
 }
