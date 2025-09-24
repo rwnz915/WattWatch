@@ -4,6 +4,29 @@ let loginBtn = document.getElementById("loginBtn");
 let rememberMeInput = document.getElementById("customCheck"); // checkbox element
 let googleLoginBtn = document.getElementById("googleLoginBtn"); // Google button
 
+
+// ----------------- PASSWORD TOGGLE -----------------
+const passwordToggle = document.createElement("span");
+passwordToggle.innerHTML = '<i class="fas fa-eye"></i>';
+passwordToggle.style.cursor = "pointer";
+passwordToggle.style.position = "absolute";
+passwordToggle.style.right = "20px";
+passwordToggle.style.top = "50%";
+passwordToggle.style.transform = "translateY(-50%)";
+passwordToggle.style.color = "#6c757d";
+loginPasswordInput.parentElement.style.position = "relative";
+loginPasswordInput.parentElement.appendChild(passwordToggle);
+
+passwordToggle.addEventListener("click", () => {
+    if (loginPasswordInput.type === "password") {
+        loginPasswordInput.type = "text";
+        passwordToggle.innerHTML = '<i class="fas fa-eye-slash"></i>';
+    } else {
+        loginPasswordInput.type = "password";
+        passwordToggle.innerHTML = '<i class="fas fa-eye"></i>';
+    }
+});
+
 // ----------------- AUTO-LOGIN -----------------
 window.addEventListener("DOMContentLoaded", () => {
   try {
@@ -91,6 +114,16 @@ async function signIn() {
 
 loginBtn.addEventListener("click", signIn);
 
+// Make Enter key trigger login
+[loginEmailInput, loginPasswordInput].forEach(input => {
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            loginBtn.click();
+        }
+    });
+});
+
 // ----------------- GOOGLE LOGIN -----------------
 googleLoginBtn.addEventListener("click", () => {
   const clientId = "988525355387-trr9q5aoejn7l83o822mk6689g85j87m.apps.googleusercontent.com";
@@ -104,5 +137,3 @@ googleLoginBtn.addEventListener("click", () => {
 
   window.location.href = oauthUrl;
 });
-
-
