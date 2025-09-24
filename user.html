@@ -170,38 +170,19 @@
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-bell fa-fw"></i>
-                                <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">2</span>
+                                <span id="alertsCounter" class="badge badge-danger badge-counter" style="display:none;">0</span>
                             </a>
-                            <!-- Dropdown - Alerts -->
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="alertsDropdown">
                                 <h6 class="dropdown-header">
-                                    Alerts Center
+                                     Alerts Center
                                 </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">September 1, 2025</div>
-                                        <span class="font-weight-bold">Monthly bill</span>
-                                    </div>
-                                </a>
-                                
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-warning">
-                                            <i class="fas fa-exclamation-triangle text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">September 1, 2025</div>
-                                        Alert: You didn't reach your goals.
-                                    </div>
-                                </a>
+
+                                <!-- Dynamic alerts container -->
+                                <div id="alertsDynamic">
+                                    <div class="dropdown-item text-center small text-gray-500">No recent notifications</div>
+                                </div>
+
                                 <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
                             </div>
                         </li>
@@ -326,7 +307,7 @@
     <script src="js/settings.js"></script>
     <script src="js/userHelper.js"></script>
     <script src="js/dashboard.js"></script>
-    <script src="js/pages-loader.js"></script>
+    <script src="js/appState.js"></script>
 
     <script>
         let userName = document.getElementById("userName");
@@ -343,7 +324,86 @@
             window.location.href = "index.html"; // redirect to login
             localStorage.removeItem("theme");
         });
+    
+        // ---------- Notifications ----------
+        function updateAlerts(calcu, goals) {
+            const alertsCounter = document.getElementById("alertsCounter");
+            const alertsDynamic = document.getElementById("alertsDynamic");
+
+             if (!alertsDynamic || !alertsCounter) return;
+
+            alertsDynamic.innerHTML = ""; // clear previous alerts
+            let alerts = [];
+
+            // Compute percent of goal used
+            let percent = 0;
+            if (goals.targetBill > 0) {
+                percent = (calcu.totalCostMonth / goals.targetBill) * 100;
+                percent = Math.min(percent, 100);
+            }
+
+            // Add alerts based on percent
+            if (percent >= 100) {
+                alerts.push({
+                    date: new Date().toLocaleDateString(),
+                    message: "<strong>Goal reached!</strong> You have exceeded your target bill.",
+                    icon: "fas fa-exclamation-triangle",
+                    color: "bg-danger"
+            });
+            } else if (percent >= 80) {
+                alerts.push({
+                    date: new Date().toLocaleDateString(),
+                message: "<strong>Warning:</strong> You're almost at your target bill.",
+                icon: "fas fa-exclamation-circle",
+                color: "bg-warning"
+                });
+            }
+
+            // Display alerts
+            if (alerts.length === 0) {
+                const noNotifItem = document.createElement("div");
+                noNotifItem.className = "dropdown-item text-center small text-gray-500";
+                noNotifItem.textContent = "No recent notifications";
+                alertsDynamic.appendChild(noNotifItem);
+                alertsCounter.style.display = "none";
+            } else {
+                alerts.forEach(alert => {
+                    const item = document.createElement("a");
+                    item.href = "#";
+                    item.className = "dropdown-item d-flex align-items-center";
+                    item.innerHTML = `
+                        <div class="mr-3">
+                        <div class="icon-circle ${alert.color}">
+                            <i class="${alert.icon} text-white"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="small text-gray-500">${alert.date}</div>
+                        ${alert.message}
+                    </div>
+                    `;
+                    alertsDynamic.appendChild(item);
+                });
+
+                alertsCounter.style.display = "inline-block";
+                alertsCounter.textContent = alerts.length;
+            }
+        }
+
+        function initUserPage() {
+            AppState.loadGoals();
+            AppState.loadCalculator();
+            const calcu = AppState.getCalculator();
+            const goals = AppState.getGoals();
+            if (!calcu || !goals) return;
+
+            updateAlerts(calcu, goals);
+        }
+
+        //initUserPage();
     </script>
+
+    <script src="js/pages-loader.js"></script>
 
 </body>
 

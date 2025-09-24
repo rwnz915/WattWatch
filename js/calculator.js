@@ -269,6 +269,8 @@ async function loadCalculationHistory(userId) {
           rate: item.rate
         });
 
+        initUserPage();
+
         //const allCalculations = AppState.getCalculator();
         //console.log("All calculations: ", allCalculations);
       });
@@ -411,5 +413,6 @@ async function initCalculatorPage() {
     await loadCalculationHistory(user.id);
     result.textContent = "";
     AppState.clearCalculator();
+    initUserPage();
   });
 }

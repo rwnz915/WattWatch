@@ -8,23 +8,18 @@ async function saveGoals(e) {
     return;
   }
 
-  const targetBill = document.getElementById("targetBill").value;
-  const targetUsage = document.getElementById("targetUsage").value;
+  const targetBill = parseFloat(document.getElementById("targetBill").value) || 0;
+  const targetUsage = parseFloat(document.getElementById("targetUsage").value) || 0;
   const goalDate = document.getElementById("goalDate").value;
 
   if (!targetBill || !targetUsage || !goalDate) {
-    showMessage("Please fill in all the fields");
+    showMessage("Please fill in all fields", "danger");
     return;
   }
 
-  const goals = {
-    targetBill: parseFloat(targetBill) || 0,
-    targetUsage: parseFloat(targetUsage) || 0,
-    goalDate: goalDate || null
-  };
+  const goals = { targetBill, targetUsage, goalDate };
 
   try {
-    // ---- Save to backend ----
     const response = await fetch(`${BASE_URL}/api/EnergyGoals/${userId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -34,8 +29,12 @@ async function saveGoals(e) {
     const result = await response.json();
     showMessage(result.message, "success");
 
-    // ---- Update UI ----
+    // <--- This is key: immediately update AppState
+    AppState.setGoals(goals);
+
+    // Update UI
     await loadCurrentGoals();
+    initUserPage();
 
   } catch (err) {
     console.error("Failed to save goals:", err);
@@ -88,7 +87,13 @@ async function clearGoals(e) {
     const result = await response.json();
 
     showMessage(result.message, "info");
+
+    // <-- Update AppState immediately
+    AppState.clearGoals();
+
+    // Update UI
     await loadCurrentGoals();
+    initUserPage();
 
   } catch (err) {
     console.error("Failed to clear goals:", err);

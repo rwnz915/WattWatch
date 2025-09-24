@@ -36,6 +36,8 @@ async function loadPage(page, pushState = true) {
         });
       }
 
+      initUserPage();
+
       if (page.includes("calculator.html") && typeof initCalculatorPage === "function") {
           initCalculatorPage();
       }
