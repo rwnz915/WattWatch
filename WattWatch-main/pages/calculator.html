@@ -1,0 +1,130 @@
+<title>WattWatch - Calculator</title>
+
+<div class="row m-3">
+  <div class="col-lg-8 mb-4">
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Calculate Energy Usage</h6>
+      </div>
+      <div class="card-body">
+        <form id="calcForm">
+          <!-- Appliance -->
+          <div class="form-group">
+            <label for="appliance">Appliance</label>
+            <select class="form-control" id="appliance" required>
+              <option value="">-- Select Appliance --</option>
+              <option value="Air Conditioner">Air Conditioner</option>
+              <option value="Electric Fan">Electric Fan</option>
+              <option value="Refrigerator">Refrigerator</option>
+              <option value="Television">Television</option>
+              <option value="Washing Machine">Washing Machine</option>
+              <option value="Microwave Oven">Microwave Oven</option>
+              <option value="Rice Cooker">Rice Cooker</option>
+              <option value="Laptop">Laptop</option>
+              <option value="Desktop Computer">Desktop Computer</option>
+              <option value="Water Heater">Water Heater</option>
+              <option value="Lights">Lights</option>
+            </select>
+          </div>
+
+
+          <!-- Type -->
+          <div class="form-group">
+            <label for="type">Type</label>
+            <select class="form-control" id="type" required disabled>
+              <option value="">-- Select Type --</option>
+            </select>
+          </div>
+
+          <!-- Brand / Model -->
+          <div class="form-group">
+            <label for="model">Brand / Model</label>
+            <select class="form-control" id="model">
+              <option value="">-- Select Brand / Model --</option>
+            </select>
+          </div>
+
+          <!-- Wattage -->
+          <div class="form-group">
+            <label for="wattage">Wattage (W)</label>
+            <input
+              type="number"
+              class="form-control only-numbers"
+              id="wattage"
+              placeholder="e.g., 1200"
+              min="1"
+              required
+              inputmode="decimal"
+            />
+          </div>
+
+          <!-- Hours -->
+          <div class="form-group">
+            <label for="hours">Hours Used per Day</label>
+            <input
+              type="number"
+              class="form-control only-numbers"
+              id="hours"
+              placeholder="e.g., 5"
+              min="0.1"
+              step="0.1"
+              required
+              inputmode="decimal"
+            />
+          </div>
+
+          <!-- Electricity Rate -->
+          <div class="form-group">
+            <label for="rate">Electricity Rate (₱/kWh)</label>
+            <input
+              type="number"
+              class="form-control only-numbers"
+              id="rate"
+              placeholder="e.g., 11"
+              min="0.1"
+              step="0.01"
+              required
+              inputmode="decimal"
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary">Calculate</button>
+        </form>
+        <hr />
+        <p id="result" class="text-success"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right column -->
+  <div class="col-lg-4 mb-4">
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-info">Recent Calculations</h6>
+      </div>
+      <div class="card-body">
+        <form id="clearForm">
+          <ul id="history" class="list-group small">
+            <li class="list-group-item text-muted">No recent calculations</li>
+          </ul>
+          <br />
+          <button type="submit" class="btn btn-outline-danger btn-sm">Clear</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-warning">Monthly Total Estimate</h6>
+      </div>
+      <div class="card-body text-center">
+        <h4 id="monthlyTotal" class="text-dark">₱0.00</h4>
+        <small class="text-muted">from all added appliances</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/appState.js"></script>
+<script src="js/calculator.js"></script>
+
