@@ -12,17 +12,18 @@
     <link rel="icon" href="img/logo.png" type="image/png">
     <title>WattWatch</title>
 
-  <script>
-    (function () {
-      const savedTheme = localStorage.getItem("theme") || "System Default";
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const useDark = savedTheme === "Dark" || (savedTheme === "System Default" && prefersDark);
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem("theme") || "System Default";
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-      if (useDark) {
-        document.documentElement.classList.add("dark-mode");
-      }
-    })();
-  </script>
+            if (savedTheme === "Dark" || (savedTheme === "System Default" && prefersDark)) {
+                document.documentElement.classList.add("dark-mode");
+            } else {
+                document.documentElement.classList.remove("dark-mode");
+            }
+        })();
+    </script>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
