@@ -1,27 +1,52 @@
 <title>WattWatch - Energy Goals</title>
 
-<div class="container-fluid">
-  <h1 class="h3 mb-4 text-gray-800">Energy Goals</h1>
-  <div class="card shadow mb-4">
-    <div class="card-header py-3">
-      <h6 class="m-0 font-weight-bold text-primary">Set Your Monthly Goals</h6>
+<div class="row m-3">
+  <!-- Left column -->
+  <div class="col-lg-8 mb-4">
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Set Your Monthly Goals</h6>
+      </div>
+      <div class="card-body">
+        <form id="energyGoalsForm">
+          <!-- Target Bill -->
+          <div class="form-group">
+            <label for="targetBill">Target Monthly Bill (₱)</label>
+            <input type="number" class="form-control" id="targetBill" placeholder="e.g., 2000" min="1" required>
+          </div>
+
+          <!-- Target Usage -->
+          <div class="form-group">
+            <label for="targetUsage">Target Energy Usage (kWh)</label>
+            <input type="number" class="form-control" id="targetUsage" placeholder="e.g., 350" min="1" required>
+          </div>
+
+          <!-- Goal Date -->
+          <div class="form-group">
+            <label for="goalDate">Goal Deadline</label>
+            <input type="date" class="form-control" id="goalDate" required>
+          </div>
+
+          <button id="saveGoals" type="submit" class="btn btn-primary">Save Goal</button>
+        </form>
+      </div>
     </div>
-    <div class="card-body">
-      <form id="energyGoalsForm">
-        <div class="form-group">
-          <label for="targetBill">Target Monthly Bill (₱)</label>
-          <input type="number" class="form-control" id="targetBill" placeholder="e.g., 2000">
-        </div>
-        <div class="form-group">
-          <label for="targetUsage">Target Energy Usage (kWh)</label>
-          <input type="number" class="form-control" id="targetUsage" placeholder="e.g., 350">
-        </div>
-        <div class="form-group">
-          <label for="goalDate">Goal Deadline</label>
-          <input type="date" class="form-control" id="goalDate">
-        </div>
-        <button id="saveGoals" type="submit" class="btn btn-primary">Save Goal</button>
-      </form>
+  </div>
+
+  <!-- Right column -->
+  <div class="col-lg-4 mb-4">
+    <!-- Current Goals -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-info">Current Goals</h6>
+      </div>
+      <div class="card-body">
+        <ul id="currentGoals" class="list-group small">
+          <li class="list-group-item text-muted">No current goals</li>
+        </ul>
+        <br />
+        <button id="clearGoals" class="btn btn-outline-danger btn-sm">Clear</button>
+      </div>
     </div>
   </div>
 </div>

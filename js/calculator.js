@@ -403,6 +403,10 @@ async function initCalculatorPage() {
   // --- Clear button ---
   clearForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    const confirmed = await showConfirm("Are you sure you want to clear your calculations?");
+    if (!confirmed) return;
+
     await fetch(`https://wattwatch-backend.onrender.com/api/calculation/clear/${user.id}`, { method: "DELETE" });
     await loadCalculationHistory(user.id);
     result.textContent = "";

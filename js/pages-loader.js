@@ -42,8 +42,13 @@ async function loadPage(page, pushState = true) {
 
       if (typeof initGoalsPage === "function") {
         const form = document.getElementById("energyGoalsForm");
+        const clear = document.getElementById("clearGoals");
         if (form) form.addEventListener("submit", saveGoals);
+        if (clear) clear.addEventListener("click", clearGoals);
         initGoalsPage();
+
+        if (page.includes("goals.html"))
+          loadCurrentGoals();
       }
 
 

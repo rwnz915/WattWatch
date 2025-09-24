@@ -34,12 +34,65 @@ async function saveGoals(e) {
     const result = await response.json();
     showMessage(result.message, "success");
 
-    // ---- Save to AppState (localStorage) ----
-    AppState.setGoals(goals);
+    // ---- Update UI ----
+    await loadCurrentGoals();
 
   } catch (err) {
     console.error("Failed to save goals:", err);
     showMessage("Error saving goals. Please try again.", "danger");
+  }
+}
+
+// ------------------- LOAD CURRENT GOALS -------------------
+async function loadCurrentGoals() {
+  const userId = getUserId();
+  if (!userId) return;
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/EnergyGoals/${userId}`);
+    const data = await response.json();
+
+    const list = document.getElementById("currentGoals");
+    list.innerHTML = "";
+
+    if (data.targetBill && data.targetUsage && data.goalDate) {
+      list.innerHTML = `
+        <li class="list-group-item"><strong>Target Bill:</strong> ₱${data.targetBill}</li>
+        <li class="list-group-item"><strong>Target Usage:</strong> ${data.targetUsage} kWh</li>
+        <li class="list-group-item"><strong>Deadline:</strong> ${new Date(data.goalDate).toLocaleDateString()}</li>
+      `;
+      document.getElementById("saveGoals").innerHTML = "Update Goals";
+    } else {
+      list.innerHTML = `<li class="list-group-item text-muted">No current goals</li>`;
+      document.getElementById("saveGoals").innerHTML = "Save Goal";
+    }
+
+  } catch (err) {
+    console.error("Failed to load goals:", err);
+  }
+}
+
+// ------------------- CLEAR GOALS -------------------
+async function clearGoals(e) {
+  e.preventDefault();
+  const userId = getUserId();
+  if (!userId) return;
+
+  const confirmed = await showConfirm("Are you sure you want to clear your goals?");
+  if (!confirmed) return;
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/EnergyGoals/clear/${userId}`, {
+      method: "DELETE"
+    });
+    const result = await response.json();
+
+    showMessage(result.message, "info");
+    await loadCurrentGoals();
+
+  } catch (err) {
+    console.error("Failed to clear goals:", err);
+    showMessage("Error clearing goals. Please try again.", "danger");
   }
 }
 

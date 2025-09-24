@@ -294,12 +294,13 @@
         </div>
     </div>
 
-    <!-- message -->
-    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- message / confirm modal -->
+    <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content border-0">
-                <div class="modal-body text-dark" id="errorMessage">Something went wrong.</div>
-                    <div class="modal-footer border-0">
+                <div class="modal-body text-dark" id="messageText">Something went wrong.</div>
+                <div class="modal-footer border-0">
+                    <button id="cancelBtn" class="btn btn-secondary" data-dismiss="modal" style="display: none;">Cancel</button>
                     <button id="okBtn" class="btn btn-primary" data-dismiss="modal">OK</button>
                 </div>
             </div>
