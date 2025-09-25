@@ -27,8 +27,8 @@ window.AppState = {
   clearCalculator() {
     this.calculator = { items: [], totalCostMonth: 0, totalKwhMonth: 0 };
     localStorage.removeItem("AppState_Calculator");
-    this.saveCalculator();
-    this._notifyCalculatorChange();
+    //this.saveCalculator();
+    //this._notifyCalculatorChange();
   },
 
   saveCalculator() {
