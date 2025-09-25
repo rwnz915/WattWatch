@@ -11,7 +11,7 @@ window.AppState = {
   addCalculator(applianceData) {
     this.calculator.items.push(applianceData);
     this._recalculateCalculator();
-    this._notifyCalculatorChange();
+    //this._notifyCalculatorChange();
   },
 
   getCalculator() {
