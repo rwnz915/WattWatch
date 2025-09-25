@@ -376,9 +376,9 @@ async function initCalculatorPage() {
       return;
     }
 
-    AppState.clearCalculator();
     await saveCalculation(user.id, appliance, type, model, wattage, hours, rate);
     await loadCalculationHistory(user.id);
+    AppState.clearCalculator();
 
     const dailyKWh = (wattage / 1000) * hours;
     const dailyCost = dailyKWh * rate;
