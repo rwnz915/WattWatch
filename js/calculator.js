@@ -316,6 +316,7 @@ async function initCalculatorPage() {
   if (!user || !user.id) return;
 
   // --- Load backend history ---
+  AppState.clearCalculator();
   await loadCalculationHistory(user.id);
 
   // --- Cascading dropdowns ---
