@@ -127,35 +127,3 @@ async function initGoalsPage() {
     console.error("Failed to load goals:", err);
   }
 }
-
-document.querySelectorAll(".only-decimals").forEach((input) => {
-  // Prevent invalid keystrokes
-  input.addEventListener("keydown", (e) => {
-    const invalidChars = ["e", "E", "+", "-"];
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
-
-    // Only allow one dot
-    if (e.key === "." && input.value.includes(".")) {
-      e.preventDefault();
-    }
-  });
-
-  // Clean up pasted or typed input
-  input.addEventListener("input", () => {
-    // Remove invalid characters
-    input.value = input.value.replace(/[^0-9.]/g, "");
-
-    // Ensure only one decimal point
-    const parts = input.value.split(".");
-    if (parts.length > 2) {
-      input.value = parts[0] + "." + parts.slice(1).join("");
-    }
-  });
-
-  // Mobile-friendly numeric input
-  input.setAttribute("inputmode", "decimal");
-  input.setAttribute("pattern", "[0-9]*[.]?[0-9]*");
-  input.setAttribute("step", "any");
-});
