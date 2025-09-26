@@ -427,28 +427,31 @@ function preventInvalidNumberInput() {
         e.preventDefault();
       }
 
-      // Prevent multiple decimals
-      if (e.key === "." && input.value.includes(".")) {
+      // ❌ Prevent starting with "."
+      if (e.key === "." && input.value.length === 0) {
         e.preventDefault();
-        return;
       }
 
-      // Fix: ensure "." goes after the number, not at the start
-      if (e.key === ".") {
-        if (input.selectionStart === 0) {
-          e.preventDefault(); // block typing "." at position 0
-          return;
-        }
+      // ❌ Prevent multiple decimals
+      if (e.key === "." && input.value.includes(".")) {
+        e.preventDefault();
       }
     });
 
     input.addEventListener("input", () => {
+      const cursorPos = input.selectionStart; // save caret pos
       let value = input.value;
 
-      // Clean invalid characters
-      value = value.replace(/[eE\+\-]/g, "");
+      // Remove invalid characters
+      let cleaned = value.replace(/[eE\+\-]/g, "");
 
-      input.value = value;
+      // ✅ only update if really changed (avoid jumping caret)
+      if (cleaned !== value) {
+        input.value = cleaned;
+
+        // restore caret as close as possible
+        input.setSelectionRange(cursorPos - (value.length - cleaned.length), cursorPos - (value.length - cleaned.length));
+      }
     });
 
     // Mobile-friendly attributes
