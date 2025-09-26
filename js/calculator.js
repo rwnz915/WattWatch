@@ -427,30 +427,24 @@ function preventInvalidNumberInput() {
         e.preventDefault();
       }
 
-      // Prevent multiple decimals
+      // Block multiple decimals
       if (e.key === "." && input.value.includes(".")) {
         e.preventDefault();
       }
     });
 
-    input.addEventListener("input", (e) => {
+    input.addEventListener("input", () => {
       let value = input.value;
 
-      // Auto-fix ".123" into "0.123"
+      // Auto-fix ".123" → "0.123"
       if (value.startsWith(".")) {
         value = "0" + value;
       }
 
-      // Remove invalid characters
+      // Remove invalid characters (just in case)
       value = value.replace(/[eE\+\-]/g, "");
 
-      if (value !== input.value) {
-        const pos = input.selectionStart + (value.length - input.value.length);
-        input.value = value;
-        input.setSelectionRange(pos, pos);
-      } else {
-        input.value = value;
-      }
+      input.value = value;
     });
 
     // Mobile-friendly attributes
