@@ -427,7 +427,12 @@ function preventInvalidNumberInput() {
         e.preventDefault();
       }
 
-      // Block multiple decimals
+      // Prevent starting with "."
+      if (e.key === "." && input.value.length === 0) {
+        e.preventDefault();
+      }
+
+      // Prevent multiple decimals
       if (e.key === "." && input.value.includes(".")) {
         e.preventDefault();
       }
@@ -436,12 +441,7 @@ function preventInvalidNumberInput() {
     input.addEventListener("input", () => {
       let value = input.value;
 
-      // Auto-fix ".123" → "0.123"
-      if (value.startsWith(".")) {
-        value = "0" + value;
-      }
-
-      // Remove invalid characters (just in case)
+      // Clean up invalid chars
       value = value.replace(/[eE\+\-]/g, "");
 
       input.value = value;
@@ -453,3 +453,4 @@ function preventInvalidNumberInput() {
     input.setAttribute("step", "any");
   });
 }
+
