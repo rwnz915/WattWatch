@@ -402,6 +402,26 @@ async function initCalculatorPage() {
     modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
   });
 
+  // Prevent invalid characters in number inputs on both desktop and mobile
+  document.querySelectorAll(".only-numbers").forEach((input) => {
+    // Prevent typing invalid characters
+    input.addEventListener("keydown", (e) => {
+      if (
+        ["e", "E", "+", "-", "."].includes(e.key) && input.type === "number"
+      ) {
+        e.preventDefault();
+      }
+    });
+
+    // Prevent pasting invalid characters
+    input.addEventListener("input", () => {
+      input.value = input.value.replace(/[^0-9]/g, "");
+    });
+
+    // Mobile-friendly input attributes
+    input.setAttribute("inputmode", "numeric");
+    input.setAttribute("pattern", "[0-9]*");
+  });
 
   // --- Clear button ---
   clearForm.addEventListener("submit", async (e) => {
