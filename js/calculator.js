@@ -434,17 +434,22 @@ function preventInvalidNumberInput() {
     });
 
     input.addEventListener("input", (e) => {
-      const originalValue = input.value;
-      const cleanedValue = originalValue.replace(/[eE\+\-]/g, "");
+      let value = input.value;
 
-      // Only update the value if it changed (to avoid caret jump)
-      if (cleanedValue !== originalValue) {
-        const selectionStart = input.selectionStart;
-        input.value = cleanedValue;
+      // Auto-fix ".123" into "0.123"
+      if (value.startsWith(".")) {
+        value = "0" + value;
+      }
 
-        // Restore caret position as best as possible
-        const newPosition = Math.max(selectionStart - (originalValue.length - cleanedValue.length), 0);
-        input.setSelectionRange(newPosition, newPosition);
+      // Remove invalid characters
+      value = value.replace(/[eE\+\-]/g, "");
+
+      if (value !== input.value) {
+        const pos = input.selectionStart + (value.length - input.value.length);
+        input.value = value;
+        input.setSelectionRange(pos, pos);
+      } else {
+        input.value = value;
       }
     });
 
