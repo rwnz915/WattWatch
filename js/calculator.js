@@ -301,6 +301,7 @@ function renderHistory() {
 // ---------- Init Calculator Page ----------
 async function initCalculatorPage() {
   setupCascadingDropdowns();
+  preventInvalidNumberInput();
   const applianceSelect = document.getElementById("appliance");
   const typeSelect = document.getElementById("type");
   const modelSelect = document.getElementById("model");
@@ -403,36 +404,36 @@ async function initCalculatorPage() {
   });
 
   document.querySelectorAll(".only-decimals").forEach((input) => {
-  // Prevent invalid keystrokes
-  input.addEventListener("keydown", (e) => {
-    const invalidChars = ["e", "E", "+", "-"];
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
+    // Prevent invalid keystrokes
+    input.addEventListener("keydown", (e) => {
+      const invalidChars = ["e", "E", "+", "-"];
+      if (invalidChars.includes(e.key)) {
+        e.preventDefault();
+      }
 
-    // Only allow one dot
-    if (e.key === "." && input.value.includes(".")) {
-      e.preventDefault();
-    }
+      // Only allow one dot
+      if (e.key === "." && input.value.includes(".")) {
+        e.preventDefault();
+      }
+    });
+
+    // Clean up pasted or typed input
+    input.addEventListener("input", () => {
+      // Remove invalid characters
+      input.value = input.value.replace(/[^0-9.]/g, "");
+
+      // Ensure only one decimal point
+      const parts = input.value.split(".");
+      if (parts.length > 2) {
+        input.value = parts[0] + "." + parts.slice(1).join("");
+      }
+    });
+
+    // Mobile-friendly numeric input
+    input.setAttribute("inputmode", "decimal");
+    input.setAttribute("pattern", "[0-9]*[.]?[0-9]*");
+    input.setAttribute("step", "any");
   });
-
-  // Clean up pasted or typed input
-  input.addEventListener("input", () => {
-    // Remove invalid characters
-    input.value = input.value.replace(/[^0-9.]/g, "");
-
-    // Ensure only one decimal point
-    const parts = input.value.split(".");
-    if (parts.length > 2) {
-      input.value = parts[0] + "." + parts.slice(1).join("");
-    }
-  });
-
-  // Mobile-friendly numeric input
-  input.setAttribute("inputmode", "decimal");
-  input.setAttribute("pattern", "[0-9]*[.]?[0-9]*");
-  input.setAttribute("step", "any");
-});
 
   // --- Clear button ---
   clearForm.addEventListener("submit", async (e) => {
@@ -446,5 +447,20 @@ async function initCalculatorPage() {
     result.textContent = "";
     AppState.clearCalculator();
     initUserPage();
+  });
+}
+
+function preventInvalidNumberInput() {
+  document.querySelectorAll(".only-numbers").forEach((input) => {
+    input.addEventListener("keydown", (e) => {
+      if (["e", "E", "+", "-"].includes(e.key)) {
+        e.preventDefault();
+      }
+    });
+
+    input.addEventListener("input", () => {
+      // Remove any invalid pasted characters
+      input.value = input.value.replace(/[eE\+\-]/g, "");
+    });
   });
 }
