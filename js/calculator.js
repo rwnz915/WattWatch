@@ -427,6 +427,11 @@ function preventInvalidNumberInput() {
         e.preventDefault();
       }
 
+      // ❌ Prevent "." as first character
+      if (e.key === "." && input.value.length === 0) {
+        e.preventDefault();
+      }
+
       // ❌ Prevent multiple decimals
       if (e.key === "." && input.value.includes(".")) {
         e.preventDefault();
@@ -434,24 +439,21 @@ function preventInvalidNumberInput() {
     });
 
     input.addEventListener("input", () => {
-      const cursorPos = input.selectionStart; // save caret pos
+      const cursorPos = input.selectionStart;
       let value = input.value;
 
       // Remove invalid characters
       let cleaned = value.replace(/[eE\+\-]/g, "");
 
-      // ✅ Auto-fix kapag nagsimula sa "."
+      // ❌ Block if first char is "."
       if (cleaned.startsWith(".")) {
-        cleaned = "1.0"; // or "0." if gusto mo default
+        cleaned = ""; // clear input
       }
 
-      // ✅ Only update if changed
       if (cleaned !== value) {
         input.value = cleaned;
-        // put cursor at end
         input.setSelectionRange(cleaned.length, cleaned.length);
       } else {
-        // restore normal caret
         input.setSelectionRange(cursorPos, cursorPos);
       }
     });
