@@ -442,7 +442,7 @@ function preventInvalidNumberInput() {
       const cursorPos = input.selectionStart;
       let value = input.value;
 
-      // Remove invalid characters
+      // Remove invalid characters (works on desktop + mobile)
       let cleaned = value.replace(/[eE\+\-]/g, "");
 
       // ❌ Block if first char is "."
@@ -458,10 +458,10 @@ function preventInvalidNumberInput() {
       }
     });
 
-    // Mobile-friendly attributes
-    input.setAttribute("inputmode", "decimal");
+    // 📱 Mobile-friendly attributes
+    input.setAttribute("inputmode", "decimal"); // shows numeric keypad w/ dot
     input.setAttribute("pattern", "[0-9]*[.]?[0-9]*");
     input.setAttribute("step", "any");
+    input.setAttribute("autocomplete", "off");
   });
 }
-
