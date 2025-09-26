@@ -427,11 +427,6 @@ function preventInvalidNumberInput() {
         e.preventDefault();
       }
 
-      // ❌ Prevent starting with "."
-      if (e.key === "." && input.value.length === 0) {
-        e.preventDefault();
-      }
-
       // ❌ Prevent multiple decimals
       if (e.key === "." && input.value.includes(".")) {
         e.preventDefault();
@@ -445,12 +440,19 @@ function preventInvalidNumberInput() {
       // Remove invalid characters
       let cleaned = value.replace(/[eE\+\-]/g, "");
 
-      // ✅ only update if really changed (avoid jumping caret)
+      // ✅ Auto-fix kapag nagsimula sa "."
+      if (cleaned.startsWith(".")) {
+        cleaned = "1.0"; // or "0." if gusto mo default
+      }
+
+      // ✅ Only update if changed
       if (cleaned !== value) {
         input.value = cleaned;
-
-        // restore caret as close as possible
-        input.setSelectionRange(cursorPos - (value.length - cleaned.length), cursorPos - (value.length - cleaned.length));
+        // put cursor at end
+        input.setSelectionRange(cleaned.length, cleaned.length);
+      } else {
+        // restore normal caret
+        input.setSelectionRange(cursorPos, cursorPos);
       }
     });
 
@@ -460,3 +462,4 @@ function preventInvalidNumberInput() {
     input.setAttribute("step", "any");
   });
 }
+
