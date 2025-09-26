@@ -402,25 +402,29 @@ async function initCalculatorPage() {
     modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
   });
 
-  // Prevent invalid characters in number inputs on both desktop and mobile
-  document.querySelectorAll(".only-numbers").forEach((input) => {
-    // Prevent typing invalid characters
+  document.querySelectorAll(".only-decimals").forEach((input) => {
+    // Prevent invalid characters from being typed
     input.addEventListener("keydown", (e) => {
-      if (
-        ["e", "E", "+", "-", "."].includes(e.key) && input.type === "number"
-      ) {
+      const invalidChars = ["e", "E", "+", "-"];
+      if (invalidChars.includes(e.key)) {
         e.preventDefault();
       }
     });
 
-    // Prevent pasting invalid characters
+    // Prevent invalid characters from being pasted or entered
     input.addEventListener("input", () => {
-      input.value = input.value.replace(/[^0-9]/g, "");
+      input.value = input.value.replace(/[^0-9.]/g, "");
+
+      // Ensure only one decimal point
+      const parts = input.value.split(".");
+      if (parts.length > 2) {
+        input.value = parts[0] + "." + parts.slice(1).join("");
+      }
     });
 
-    // Mobile-friendly input attributes
-    input.setAttribute("inputmode", "numeric");
-    input.setAttribute("pattern", "[0-9]*");
+    // Mobile-friendly numeric keyboard with decimal support
+    input.setAttribute("inputmode", "decimal");
+    input.setAttribute("pattern", "[0-9]*[.]?[0-9]*");
   });
 
   // --- Clear button ---
