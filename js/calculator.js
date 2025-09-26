@@ -402,37 +402,32 @@ async function initCalculatorPage() {
     modelSelect.innerHTML = '<option value="">-- Select Brand / Model --</option>';
   });
 
+  d// Allow only digits and one decimal point
   document.querySelectorAll(".only-decimals").forEach((input) => {
-  // Prevent invalid keystrokes
-  input.addEventListener("keydown", (e) => {
-    const invalidChars = ["e", "E", "+", "-"];
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
+    input.addEventListener("keydown", (e) => {
+      const invalidChars = ["e", "E", "+", "-"];
+      if (invalidChars.includes(e.key)) {
+        e.preventDefault();
+      }
 
-    // Only allow one dot
-    if (e.key === "." && input.value.includes(".")) {
-      e.preventDefault();
-    }
+      // Allow only one decimal point
+      if (e.key === "." && input.value.includes(".")) {
+        e.preventDefault();
+      }
+    });
+
+    input.addEventListener("input", () => {
+      // Remove any non-digit or multiple dots
+      input.value = input.value
+        .replace(/[^0-9.]/g, "")        // Remove letters or symbols
+        .replace(/(\..*)\./g, "$1");    // Keep only first dot
+    });
+
+    // Mobile-friendly numeric input
+    input.setAttribute("inputmode", "decimal");
+    input.setAttribute("pattern", "[0-9]*[.]?[0-9]*");
+    input.setAttribute("step", "any");
   });
-
-  // Clean up pasted or typed input
-  input.addEventListener("input", () => {
-    // Remove invalid characters
-    input.value = input.value.replace(/[^0-9.]/g, "");
-
-    // Ensure only one decimal point
-    const parts = input.value.split(".");
-    if (parts.length > 2) {
-      input.value = parts[0] + "." + parts.slice(1).join("");
-    }
-  });
-
-  // Mobile-friendly numeric input
-  input.setAttribute("inputmode", "decimal");
-  input.setAttribute("pattern", "[0-9]*[.]?[0-9]*");
-  input.setAttribute("step", "any");
-});
 
   // --- Clear button ---
   clearForm.addEventListener("submit", async (e) => {
