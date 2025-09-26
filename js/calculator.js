@@ -427,21 +427,25 @@ function preventInvalidNumberInput() {
         e.preventDefault();
       }
 
-      // Prevent starting with "."
-      if (e.key === "." && input.value.length === 0) {
-        e.preventDefault();
-      }
-
       // Prevent multiple decimals
       if (e.key === "." && input.value.includes(".")) {
         e.preventDefault();
+        return;
+      }
+
+      // Fix: ensure "." goes after the number, not at the start
+      if (e.key === ".") {
+        if (input.selectionStart === 0) {
+          e.preventDefault(); // block typing "." at position 0
+          return;
+        }
       }
     });
 
     input.addEventListener("input", () => {
       let value = input.value;
 
-      // Clean up invalid chars
+      // Clean invalid characters
       value = value.replace(/[eE\+\-]/g, "");
 
       input.value = value;
@@ -453,4 +457,3 @@ function preventInvalidNumberInput() {
     input.setAttribute("step", "any");
   });
 }
-
