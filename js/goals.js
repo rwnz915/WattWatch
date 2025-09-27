@@ -9,13 +9,15 @@ async function saveGoals(e) {
   }
 
   const targetBill = parseFloat(document.getElementById("targetBill").value) || 0;
-  const targetUsage = parseFloat(document.getElementById("targetUsage").value) || 0;
   const goalDate = document.getElementById("goalDate").value;
 
-  if (!targetBill || !targetUsage || !goalDate) {
+  if (!targetBill || !goalDate) {
     showMessage("Please fill in all fields", "danger");
     return;
   }
+
+  // Auto-calculate usage from bill
+  const targetUsage = (targetBill / AppState.getElectricityRate()).toFixed(2);
 
   const goals = { targetBill, targetUsage, goalDate };
 
@@ -29,7 +31,7 @@ async function saveGoals(e) {
     const result = await response.json();
     showMessage(result.message, "success");
 
-    // <--- This is key: immediately update AppState
+    // Update AppState immediately
     AppState.setGoals(goals);
 
     // Update UI
@@ -54,10 +56,12 @@ async function loadCurrentGoals() {
     const list = document.getElementById("currentGoals");
     list.innerHTML = "";
 
-    if (data.targetBill && data.targetUsage && data.goalDate) {
+    if (data.targetBill && data.goalDate) {
+      const targetUsage = (data.targetBill / AppState.getElectricityRate()).toFixed(2);
+
       list.innerHTML = `
         <li class="list-group-item"><strong>Target Bill:</strong> ₱${data.targetBill}</li>
-        <li class="list-group-item"><strong>Target Usage:</strong> ${data.targetUsage} kWh</li>
+        <li class="list-group-item"><strong>Target Usage:</strong> ${targetUsage} kWh</li>
         <li class="list-group-item"><strong>Deadline:</strong> ${new Date(data.goalDate).toLocaleDateString()}</li>
       `;
       document.getElementById("saveGoals").innerHTML = "Update Goals";
@@ -88,7 +92,7 @@ async function clearGoals(e) {
 
     showMessage(result.message, "info");
 
-    // <-- Update AppState immediately
+    // Update AppState immediately
     AppState.clearGoals();
 
     // Update UI
@@ -112,18 +116,21 @@ async function initGoalsPage() {
 
     let goalsButton = document.getElementById("saveGoals");
 
-    if (data.targetBill && data.targetUsage && data.goalDate) {
+    if (data.targetBill && data.goalDate) {
         if (goalsButton) goalsButton.innerHTML = "Update Goals";
     }
 
-    // Sync into AppState
     AppState.setGoals({
       targetBill: parseFloat(data.targetBill) || 0,
-      targetUsage: parseFloat(data.targetUsage) || 0,
+      targetUsage: data.targetUsage 
+        ? parseFloat(data.targetUsage) 
+        : (data.targetBill ? (data.targetBill / AppState.getElectricityRate()).toFixed(2) : 0),
       goalDate: data.goalDate || null
     });
 
   } catch (err) {
     console.error("Failed to load goals:", err);
   }
+
+  console.log(AppState.getElectricityRate());
 }

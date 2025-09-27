@@ -165,6 +165,7 @@ function initDashboardPage() {
         renderAppliancePieChart();
         renderUsageChart();
     //});
-
+    
+    console.log(AppState.getElectricityRate());
 }
 

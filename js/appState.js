@@ -2,6 +2,7 @@
 window.AppState = {
   calculator: { items: [], totalCostMonth: 0, totalKwhMonth: 0 },
   goals: { targetBill: 0, targetUsage: 0, goalDate: "" },
+  electricityRate: 0,
 
   // Listeners for changes
   _calculatorListeners: [],
@@ -43,7 +44,7 @@ window.AppState = {
 
     this.calculator.totalCostMonth = this.calculator.items.reduce((sum, item) => {
       const dailyKwh = (item.wattage / 1000) * item.hours;
-      const dailyCost = dailyKwh * item.rate;
+      const dailyCost = dailyKwh * (item.rate || this.electricityRate);
       return sum + dailyCost * 30;
     }, 0);
 
@@ -95,6 +96,16 @@ window.AppState = {
 
   _notifyGoalsChange() {
     this._goalsListeners.forEach(cb => cb(this.goals));
+  },
+
+  // ---------------- ELECTRICITY RATE ----------------
+  setElectricityRate(rate) {
+    this.electricityRate = rate;
+    localStorage.setItem("electricityRate", rate);
+  },
+
+  getElectricityRate() {
+    return this.electricityRate || parseFloat(localStorage.getItem("electricityRate")) || 0;
   }
 };
 

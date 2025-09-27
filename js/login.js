@@ -28,18 +28,38 @@ passwordToggle.addEventListener("click", () => {
 });
 
 // ----------------- AUTO-LOGIN -----------------
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
   try {
     const user = getUserInfo();
-    if (user && user.page) {
-      fetch("https://wattwatch-backend.onrender.com/health/ping")
-        .then(resp => {
-          if (!resp.ok) throw new Error("server not reachable");
+    if (user && user.id) {
+      try {
+        const resp = await fetch("https://wattwatch-backend.onrender.com/health/ping");
+        if (!resp.ok) throw new Error("server not reachable");
+
+        if (typeof loadSettings === "function") {
+          try { await loadSettings(); } catch (err) { console.warn("Failed to load settings:", err); }
+        }
+
+        if (typeof updateAppStateGoals === "function") {
+          try { await updateAppStateGoals(user.id); } catch (err) { console.warn("Failed to update goals:", err); }
+        }
+
+        if (typeof updateAppStateCalculations === "function") {
+          try { await updateAppStateCalculations(user.id); } catch (err) { console.warn("Failed to update calculations:", err); }
+        }
+
+        AppState.setElectricityRate(13.09);
+
+        if (user.page) {
           window.location.href = user.page;
-        })
-        .catch(err => console.warn("Auto-login skipped:", err));
+        }
+
+      } catch (err) {
+        console.warn("Auto-login skipped (server offline):", err);
+      }
     }
 
+    // Autofill email from remember me
     const saved = localStorage.getItem("userInfo");
     if (saved) {
       try {
@@ -84,6 +104,8 @@ async function signIn() {
       };
 
       setUserInfo(userData, rememberMeInput && rememberMeInput.checked);
+
+      AppState.setElectricityRate(13.09);
 
       if (typeof loadSettings === "function") {
         try { await loadSettings(); } catch (err) { console.warn("Failed to load settings after login:", err); }
