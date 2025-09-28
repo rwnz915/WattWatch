@@ -1,3 +1,55 @@
+const applianceTips = {
+    "Air Conditioner": [
+        "Set aircon to 25°C for efficiency.",
+        "Clean filters regularly for better airflow.",
+        "Use a split-type AC if possible for lower energy consumption.",
+        "Close windows and doors when running the AC."
+    ],
+    "Electric Fan": [
+        "Use fans instead of AC for short-term cooling.",
+        "Choose a tower or energy-efficient model to reduce power usage."
+    ],
+    "Refrigerator": [
+        "Set fridge temperature to 3–5°C, freezer to -18°C.",
+        "Do not overload your fridge to allow proper cooling.",
+        "Consider a double-door or side-by-side model for efficiency."
+    ],
+    "Television": [
+        "Turn off TV when not in use.",
+        "Use energy-saving mode if available.",
+        "Smart TVs consume more energy; unplug if idle."
+    ],
+    "Washing Machine": [
+        "Wash full loads only to save water and energy.",
+        "Use cold water cycles when possible.",
+        "Front-load machines are more energy-efficient than top-load."
+    ],
+    "Microwave Oven": [
+        "Use microwave instead of oven for small meals to save energy.",
+        "Avoid overcooking; it wastes power."
+    ],
+    "Rice Cooker": [
+        "Cook only needed portions to save electricity.",
+        "Use multi-cookers with energy-saving modes if available."
+    ],
+    "Laptop": [
+        "Use power-saving mode when working on battery.",
+        "Shut down instead of sleep for long breaks."
+    ],
+    "Desktop Computer": [
+        "Turn off when not in use.",
+        "Use energy-efficient power supplies."
+    ],
+    "Water Heater": [
+        "Set water heater to 50–55°C.",
+        "Use tankless heaters for on-demand heating."
+    ],
+    "Lights": [
+        "Replace incandescent or CFL bulbs with LED for energy saving.",
+        "Turn off lights when not needed."
+    ]
+};
+
 function animateValue(el, start, end, duration, prefix = "", suffix = "") {
     const range = end - start;
     let startTime = null;
@@ -110,6 +162,65 @@ function renderTopAppliances() {
     });
 }
 
+function renderEnergyTips() {
+    const tipsContainer = document.getElementById("energyTipsList");
+    const calcu = AppState.getCalculator();
+    const goals = AppState.getGoals();
+
+    // Base tips (always neutral)
+    const baseTips = [
+        "Turn off lights when not in use.",
+        "Unplug appliances when idle.",
+        "Switch off lights and electrical appliances when not using them",
+        "Use natural light whenever possible.",
+        "Regularly maintain appliances to keep them efficient.",
+        "Close doors and windows when using air conditioning.",
+    ];
+
+    if (!calcu.items || calcu.items.length === 0) {
+        // No appliances: only base tips
+        tipsContainer.innerHTML = baseTips.map(tip => `<li>${tip}</li>`).join("");
+        return;
+    }
+
+    // Sort appliances by energy usage (wattage * hours)
+    const sorted = [...calcu.items].sort((a, b) => b.wattage * b.hours - a.wattage * a.hours);
+
+    // Determine progress percentage
+    let percent = 0;
+    if (goals.targetBill > 0) {
+        percent = (calcu.totalCostMonth / goals.targetBill) * 100;
+        percent = Math.min(percent, 150); // allow some overshoot
+    }
+
+    let colorClass = "text-info";
+    if (percent >= 80 && percent < 100) colorClass = "text-warning";
+    if (percent >= 100) colorClass = "text-danger";
+
+    let tipsHtml = "";
+
+    if (percent >= 80) {
+        // Yellow or Red: show top 3 appliances
+        const top3 = sorted.slice(0, 3);
+        top3.forEach(appl => {
+            const applTips = applianceTips[appl.appliance] || [];
+            let numTips = applTips.length;
+
+            // If yellow, only show 1-2 tips per appliance
+            if (percent < 100) numTips = Math.min(2, applTips.length);
+
+            for (let i = 0; i < numTips; i++) {
+                tipsHtml += `<li class="${colorClass}">${appl.appliance}: ${applTips[i]}</li>`;
+            }
+        });
+    }
+
+    // Always show base tips after appliance tips
+    tipsHtml += baseTips.map(tip => `<li>${tip}</li>`).join("");
+
+    tipsContainer.innerHTML = tipsHtml;
+}
+
 function initDashboardPage() {
     AppState.loadGoals();
     AppState.loadCalculator();
@@ -164,6 +275,7 @@ function initDashboardPage() {
         renderTopAppliances();
         renderAppliancePieChart();
         renderUsageChart();
+        renderEnergyTips();
     //});
     
     //console.log(AppState.getElectricityRate());

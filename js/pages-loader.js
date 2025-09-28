@@ -43,6 +43,10 @@ async function loadPage(page, pushState = true) {
           initCalculatorPage();
       }
 
+      if (page.includes("dashboard.html") && typeof initDashboardPage === "function") {
+          initDashboardPage();
+      }
+
       if (typeof initGoalsPage === "function") {
         const form = document.getElementById("energyGoalsForm");
         const clear = document.getElementById("clearGoals");
@@ -57,12 +61,12 @@ async function loadPage(page, pushState = true) {
       if (page.includes("profile.html") && typeof initProfilePage == "function") {
         initProfilePage();
       }
+
+      if (page.includes("activity_log.html") && typeof initAlertCenterPage == "function") {
+        initAlertCenterPage();
+      }
       
       //////////////////////////////////////////
-
-      if (page.includes("dashboard.html") && typeof initDashboardPage === "function") {
-          initDashboardPage();
-      }
 
       // Init page-specific scripts
       if (typeof initThemeSelector === "function") initThemeSelector();
