@@ -133,28 +133,33 @@ function initProfilePage() {
 function initProfilePhoto(user) {
   const profilePreview = document.getElementById('profilePreview');
   const changePhotoBtn = document.getElementById('changePhotoBtn');
-
   const modal = new bootstrap.Modal(document.getElementById('photoModal'));
   const modalPreview = document.getElementById('modalPreview');
   const modalFileInput = document.getElementById('modalFileInput');
   const restoreDefaultBtn = document.getElementById('restoreDefaultBtn');
   const savePhotoBtn = document.getElementById('savePhotoBtn');
   const cancelPhotoBtn = document.querySelector('#photoModal .btn-secondary');
+  const topbarImg = document.querySelector(".img-profile.rounded-circle");
 
   const defaultProfile = "img/undraw_profile.svg";
 
+  // Initialize preview
+  profilePreview.src = user.profileImage || defaultProfile;
+  if (topbarImg) topbarImg.src = profilePreview.src;
+
+  // Open modal
   changePhotoBtn.addEventListener('click', () => {
     modalPreview.src = profilePreview.src || defaultProfile;
     modalFileInput.value = "";
     modal.show();
   });
 
+  // Cancel button
   cancelPhotoBtn.addEventListener('click', () => {
     modal.hide();
-    //showMessage("Photo update canceled.");
   });
 
-  // Preview new selected image
+  // Preview selected image
   modalFileInput.addEventListener('change', () => {
     const file = modalFileInput.files[0];
     if (file) {
@@ -172,45 +177,34 @@ function initProfilePhoto(user) {
 
   // Save photo
   savePhotoBtn.addEventListener('click', async () => {
-    const file = modalFileInput.files[0];
-    let imageData;
+    let imageData = modalPreview.src === defaultProfile ? null : modalPreview.src;
 
     try {
-      if (!file && modalPreview.src === defaultProfile) {
-        imageData = null;
-      } else if (file) {
-        const reader = new FileReader();
-        reader.onload = async e => {
-          imageData = e.target.result;
-          profilePreview.src = imageData;
+      // Update frontend
+      profilePreview.src = modalPreview.src;
+      if (topbarImg) topbarImg.src = profilePreview.src;
 
-          const res = await fetch("https://wattwatch-backend.onrender.com/api/auth/update-profile-image", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: user.id, profileImage: imageData })
-          });
+      // Send to backend
+      const res = await fetch("https://wattwatch-backend.onrender.com/api/auth/update-profile-image", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, profileImage: imageData })
+      });
 
-          const data = await res.json();
-          if (res.ok) showMessage("Profile photo updated successfully!");
-          else showMessage(data.message || "Failed to update photo.");
+      const data = await res.json();
+      if (res.ok) {
+        user.profileImage = imageData;
 
-          modal.hide();
-        };
-        reader.readAsDataURL(file);
-        return;
+        // Update storage
+        if (localStorage.getItem("userInfo")) localStorage.setItem("userInfo", JSON.stringify(user));
+        if (sessionStorage.getItem("userInfo")) sessionStorage.setItem("userInfo", JSON.stringify(user));
+
+        showMessage(imageData ? "Profile photo updated successfully!" : "Profile photo reset to default!");
+        modal.hide();
       } else {
-        profilePreview.src = defaultProfile;
-        const res = await fetch("/api/auth/update-profile-image", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: user.id, profileImage: null })
-        });
-        const data = await res.json();
-        if (res.ok) showMessage("Profile photo reset to default!");
-        else showMessage(data.message || "Failed to reset photo.");
+        showMessage(data.message || "Failed to update photo.");
       }
 
-      modal.hide();
     } catch (err) {
       showMessage("Error updating photo: " + err.message);
     }

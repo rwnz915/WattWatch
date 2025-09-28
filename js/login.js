@@ -102,7 +102,8 @@ async function signIn() {
         email: data.email,
         page: data.page,
         isGoogleUser: data.isGoogleUser ?? false,
-        createdAt: data.createdAt ?? null
+        createdAt: data.createdAt ?? null,
+        profileImage: data.profileImage ?? "img/undraw_profile.svg"
       };
 
       setUserInfo(userData, rememberMeInput && rememberMeInput.checked);
