@@ -1,4 +1,56 @@
 // appState.js
+const applianceTips = {
+    "Air Conditioner": [
+        "Set aircon to 25°C for efficiency.",
+        "Clean filters regularly for better airflow.",
+        "Use a split-type AC if possible for lower energy consumption.",
+        "Close windows and doors when running the AC."
+    ],
+    "Electric Fan": [
+        "Use fans instead of AC for short-term cooling.",
+        "Choose a tower or energy-efficient model to reduce power usage."
+    ],
+    "Refrigerator": [
+        "Set fridge temperature to 3–5°C, freezer to -18°C.",
+        "Do not overload your fridge to allow proper cooling.",
+        "Consider a double-door or side-by-side model for efficiency."
+    ],
+    "Television": [
+        "Turn off TV when not in use.",
+        "Use energy-saving mode if available.",
+        "Smart TVs consume more energy; unplug if idle."
+    ],
+    "Washing Machine": [
+        "Wash full loads only to save water and energy.",
+        "Use cold water cycles when possible.",
+        "Front-load machines are more energy-efficient than top-load."
+    ],
+    "Microwave Oven": [
+        "Use microwave instead of oven for small meals to save energy.",
+        "Avoid overcooking; it wastes power."
+    ],
+    "Rice Cooker": [
+        "Cook only needed portions to save electricity.",
+        "Use multi-cookers with energy-saving modes if available."
+    ],
+    "Laptop": [
+        "Use power-saving mode when working on battery.",
+        "Shut down instead of sleep for long breaks."
+    ],
+    "Desktop Computer": [
+        "Turn off when not in use.",
+        "Use energy-efficient power supplies."
+    ],
+    "Water Heater": [
+        "Set water heater to 50–55°C.",
+        "Use tankless heaters for on-demand heating."
+    ],
+    "Lights": [
+        "Replace incandescent or CFL bulbs with LED for energy saving.",
+        "Turn off lights when not needed."
+    ]
+};
+
 window.AppState = {
   calculator: { items: [], totalCostMonth: 0, totalKwhMonth: 0 },
   goals: { targetBill: 0, targetUsage: 0, goalDate: "" },

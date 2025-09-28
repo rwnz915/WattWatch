@@ -28,3 +28,26 @@
   transition: opacity 0.2s ease;
   z-index: 999;
 }
+
+/* Default (light theme) */
+.alert-details {
+  color: #333333;
+}
+
+/* Dark mode text override */
+.dark-mode .alert-details {
+  color: #cccccc !important;
+}
+
+/* Adjust tips block inside details */
+.dark-mode .alert-details ul li,
+.dark-mode .alert-details strong {
+  color: #d0d0d0 !important;
+}
+
+/* Optional: soften the border in dark mode */
+.dark-mode .alert-details .border-danger {
+  border-color: #ff7b7b !important;
+}
+
+

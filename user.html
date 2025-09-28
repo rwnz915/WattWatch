@@ -383,7 +383,8 @@
                 alerts.forEach(alert => {
                     const item = document.createElement("a");
                     item.href = "#";
-                    item.className = "dropdown-item d-flex align-items-center";
+                    item.className = "dropdown-item d-flex align-items-center load-page";
+                    item.setAttribute("data-page", "pages/activity_log.html");
                     item.innerHTML = `
                         <div class="mr-3">
                         <div class="icon-circle ${alert.color}">
@@ -413,6 +414,20 @@
             updateAlerts(calcu, goals);
         }
 
+        document.addEventListener("click", function (e) {
+            const link = e.target.closest(".load-page");
+            if (link) {
+                e.preventDefault();
+                const page = link.getAttribute("data-page");
+                if (page) {
+                loadPage(page);
+
+                // Update active nav highlight if inside nav
+                document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
+                link.closest(".nav-item")?.classList.add("active");
+                }
+            }
+        });
         //initUserPage();
     </script>
 
