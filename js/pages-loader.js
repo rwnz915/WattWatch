@@ -36,6 +36,7 @@ async function loadPage(page, pushState = true) {
         });
       }
 
+      //////////// Init page Initialization \\\\\\\\\\\\\\\
       initUserPage();
 
       if (page.includes("calculator.html") && typeof initCalculatorPage === "function") {
@@ -53,6 +54,11 @@ async function loadPage(page, pushState = true) {
           loadCurrentGoals();
       }
 
+      if (page.includes("profile.html") && typeof initProfilePage == "function") {
+        initProfilePage();
+      }
+      
+      //////////////////////////////////////////
 
       if (page.includes("dashboard.html") && typeof initDashboardPage === "function") {
           initDashboardPage();
