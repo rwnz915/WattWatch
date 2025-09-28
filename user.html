@@ -319,6 +319,9 @@
             userName.innerHTML = userInfo.firstName;
         }
 
+        const topbarImg = document.querySelector(".img-profile.rounded-circle");
+        if (topbarImg) topbarImg.src = user.profileImage;
+
         document.getElementById("logoutBtn").addEventListener("click", () => {
             clearUserInfo(); // clear localStorage + sessionStorage
             window.location.href = "index.html"; // redirect to login
