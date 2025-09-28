@@ -5,7 +5,8 @@ function animateValue(el, start, end, duration, prefix = "", suffix = "") {
     function step(timestamp) {
         if (!startTime) startTime = timestamp;
         const progress = Math.min((timestamp - startTime) / duration, 1);
-        const value = Math.floor(progress * range + start);
+        const value = start + progress * range;
+
         el.textContent =
             prefix +
             value.toLocaleString(undefined, {
@@ -13,6 +14,7 @@ function animateValue(el, start, end, duration, prefix = "", suffix = "") {
                 maximumFractionDigits: 2,
             }) +
             suffix;
+
         if (progress < 1) {
             requestAnimationFrame(step);
         }
@@ -20,6 +22,7 @@ function animateValue(el, start, end, duration, prefix = "", suffix = "") {
 
     requestAnimationFrame(step);
 }
+
 
 let appliancePieChart;
 
