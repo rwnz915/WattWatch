@@ -7,7 +7,7 @@ const applianceData = {
   },
   "Electric Fan": {
     "Stand Fan": ["Asahi SF-20", "Hanabishi HS-16", "Union UGSF-161"],
-    "Desk Fan": ["3D DF-602", "Union UDF-131", "Imarflex IF-612"],
+    "Desk Fan": ["3D DF-602", "Union UDF-131", "Imarflex IF-612", "SYCAT FC-180"],
     "Tower Fan": ["KDK Tower 40", "Hanabishi HTF-600"]
   },
   "Refrigerator": {
@@ -70,6 +70,7 @@ const applianceDefaults = {
   "3D DF-602": { wattage: 50, hours: 5, rate: AppState.getElectricityRate() },
   "Union UDF-131": { wattage: 55, hours: 5, rate: AppState.getElectricityRate() },
   "Imarflex IF-612": { wattage: 60, hours: 5, rate: AppState.getElectricityRate() },
+  "SYCAT FC-180": { wattage: 40, hours: 4, rate: AppState.getElectricityRate() },
   "KDK Tower 40": { wattage: 70, hours: 7, rate: AppState.getElectricityRate() },
   "Hanabishi HTF-600": { wattage: 80, hours: 7, rate: AppState.getElectricityRate() },
 
