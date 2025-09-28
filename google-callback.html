@@ -32,7 +32,9 @@
             firstName: data.firstName,
             lastName: data.lastName,
             email: data.email,
-            page: data.page
+            page: data.page,
+            isGoogleUser: data.isGoogleUser ?? false,
+            createdAt: data.createdAt ?? null
           }, true); // remember me
 
           AppState.setElectricityRate(13.09);

@@ -4,6 +4,22 @@ function initProfilePage() {
 
   document.getElementById("displayName").textContent = user.firstName + " " + user.lastName;
   document.getElementById("displayEmail").textContent = user.email;
+  
+  if (user.createdAt) {
+    const createdDate = new Date(user.createdAt);
+    document.getElementById("accountCreated").textContent = createdDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+  }
+
+  if (user.isGoogleUser) {
+    const emailBtn = document.getElementById("changeEmailBtn");
+    const passwordBtn = document.getElementById("changePasswordBtn");
+    if (emailBtn) emailBtn.style.display = "none";
+    if (passwordBtn) passwordBtn.style.display = "none";
+  }
 
   // Edit Name
   document.getElementById("editBtn").addEventListener("click", async () => {

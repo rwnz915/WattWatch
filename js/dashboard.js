@@ -166,6 +166,6 @@ function initDashboardPage() {
         renderUsageChart();
     //});
     
-    console.log(AppState.getElectricityRate());
+    //console.log(AppState.getElectricityRate());
 }
 

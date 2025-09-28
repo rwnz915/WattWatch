@@ -100,7 +100,9 @@ async function signIn() {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
-        page: data.page
+        page: data.page,
+        isGoogleUser: data.isGoogleUser ?? false,
+        createdAt: data.createdAt ?? null
       };
 
       setUserInfo(userData, rememberMeInput && rememberMeInput.checked);
