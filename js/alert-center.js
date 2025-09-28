@@ -39,15 +39,17 @@ function initAlertCenterPage() {
             color: "danger",
             icon: "fas fa-exclamation-triangle",
             details: `
+            <div class="m-3">
                 Your current usage is <strong>₱${calcu.totalCostMonth.toFixed(2)}</strong>, 
                 compared to your target bill of <strong>₱${goals.targetBill.toFixed(2)}</strong>. 
                 Consider unplugging unused appliances or switching to energy-efficient devices.
-                <div class="tips-box mt-2 p-2">
-                    <strong class="text-danger">Energy Saving Tips:</strong>
+                <div class="mt-2 p-2 border-left border-danger">
+                    <b class="text-danger">Energy Saving Tips:</b>
                     <ul class="mb-0">
                         ${getEnergyTips(3).map(tip => `<li>${tip}</li>`).join("")}
                     </ul>
                 </div>
+            </div>
             `
         });
     } else if (percent >= 80) {
@@ -57,15 +59,17 @@ function initAlertCenterPage() {
             color: "warning",
             icon: "fas fa-exclamation-circle",
             details: `
+            <div class="m-3">
                 You’ve used <strong>${percent.toFixed(1)}%</strong> of your monthly budget 
                 (₱${calcu.totalCostMonth.toFixed(2)} out of ₱${goals.targetBill.toFixed(2)}). 
                 Try reducing appliance usage during peak hours to save more.
-                <div class="tips-box mt-2 p-2">
-                    <strong class="text-warning">Energy Saving Tips:</strong>
+                <div class="mt-2 p-2 border-left border-warning">
+                    <b class="text-warning">Energy Saving Tips:</b>
                     <ul class="mb-0">
                         ${getEnergyTips(2).map(tip => `<li>${tip}</li>`).join("")}
                     </ul>
                 </div>
+            </div>
             `
         });
     }
@@ -77,6 +81,7 @@ function initAlertCenterPage() {
         color: "info",
         icon: "fas fa-bolt",
         details: `
+        <div class="m-3">
             Meralco’s residential rate for September 2025 is <strong>₱13.09 per kWh</strong>, 
             which is <strong>₱0.50 higher</strong> compared to last month’s ₱12.59/kWh.
             <div class="mt-2">
@@ -84,12 +89,13 @@ function initAlertCenterPage() {
                 would change your bill by about <strong>₱${(calcu.totalKwhMonth * 0.50).toFixed(2)}</strong> vs last month.
             </div>
             <div class="tips-box mt-2 p-2">
-                <strong class="text-info">Energy-saving tip:</strong>
+                <b class="text-info">Energy-saving tip:</b>
                 <ul class="mb-0">
                     ${getEnergyTips(2).map(tip => `<li>${tip}</li>`).join("")}
                 </ul>
             </div>
             <div class="mt-2"><a href="https://company.meralco.com.ph/news-and-advisories/lower-rates-september-2025" target="_blank" rel="noopener noreferrer">Read the advisory</a></div>
+        </div>
         `
     });
 

@@ -50,4 +50,13 @@
   border-color: #ff7b7b !important;
 }
 
+.alert-details .tips-box.text-danger {
+  color: #dc3545 !important; /* Bootstrap red */
+}
+
+.alert-details .tips-box.text-warning {
+  color: #ffc107 !important; /* Bootstrap yellow */
+}
+
+
 

@@ -413,21 +413,6 @@
 
             updateAlerts(calcu, goals);
         }
-
-        document.addEventListener("click", function (e) {
-            const link = e.target.closest(".load-page");
-            if (link) {
-                e.preventDefault();
-                const page = link.getAttribute("data-page");
-                if (page) {
-                loadPage(page);
-
-                // Update active nav highlight if inside nav
-                document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
-                link.closest(".nav-item")?.classList.add("active");
-                }
-            }
-        });
         //initUserPage();
     </script>
 

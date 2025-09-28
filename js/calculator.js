@@ -253,6 +253,8 @@ async function loadCalculationHistory(userId) {
     //let khwtotal = 0;
 
     if (data && data.length > 0) {
+       AppState.clearCalculator();
+
       data.forEach(item => {
         const li = document.createElement("li");
         li.className = "list-group-item";
