@@ -396,6 +396,29 @@
                         ${alert.message}
                     </div>
                     `;
+                    item.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        //e.stopPropagation();
+
+                        const alertsToggle = document.getElementById("alertsDropdown");
+                        try {
+                            if (alertsToggle && bootstrap) {
+                                const dropdown = bootstrap.Dropdown.getInstance(toggle) || new bootstrap.Dropdown(toggle);
+                                dropdown.hide();
+                            } else {
+                                const dropdownMenu = toggle?.nextElementSibling;
+                                if (dropdownMenu) dropdownMenu.classList.remove("show");
+                            }
+                        } catch (err) {
+                        }
+
+                        if (typeof loadPage === "function") {
+                            loadPage("pages/activity_log.html");
+                        } else {
+                            window.location.href = "pages/activity_log.html";
+                        }
+                    });
+                    
                     alertsDynamic.appendChild(item);
                 });
 
