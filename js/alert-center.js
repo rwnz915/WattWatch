@@ -17,87 +17,96 @@ function initAlertCenterPage() {
         percent = Math.min(percent, 150); // allow overshoot
     }
 
-    // helper (same as before)
-    function getEnergyTips(count = 2) {
-        const allTips = [];
-        for (const category in applianceTips) {
-            allTips.push(...applianceTips[category]);
-        }
-        // shuffle
-        for (let i = allTips.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [allTips[i], allTips[j]] = [allTips[j], allTips[i]];
-        }
-        return allTips.slice(0, count);
+    // Helper: generate up to 3 appliance-specific tips or fallback
+function getEnergyTips(calcu, percent, maxTips = 3) {
+    if (!calcu.items || calcu.items.length === 0) {
+        // No appliances → fallback to base tips
+        return baseTips.slice(0, maxTips);
     }
 
-    // Add alerts (same logic you already have)
-    if (percent >= 100) {
-        alerts.push({
-            date: new Date().toLocaleDateString(),
-            message: "You have <strong>exceeded your target bill!</strong>",
-            color: "danger",
-            icon: "fas fa-exclamation-triangle",
-            details: `
-            <div class="m-3">
-                Your current usage is <strong>₱${calcu.totalCostMonth.toFixed(2)}</strong>, 
-                compared to your target bill of <strong>₱${goals.targetBill.toFixed(2)}</strong>. 
-                Consider unplugging unused appliances or switching to energy-efficient devices.
-                <div class="mt-2 p-2 border-left border-danger">
-                    <b class="text-danger">Energy Saving Tips:</b>
-                    <ul class="mb-0">
-                        ${getEnergyTips(3).map(tip => `<li>${tip}</li>`).join("")}
-                    </ul>
-                </div>
-            </div>
-            `
-        });
-    } else if (percent >= 80) {
-        alerts.push({
-            date: new Date().toLocaleDateString(),
-            message: "You're almost at your <strong>target bill.</strong>",
-            color: "warning",
-            icon: "fas fa-exclamation-circle",
-            details: `
-            <div class="m-3">
-                You’ve used <strong>${percent.toFixed(1)}%</strong> of your monthly budget 
-                (₱${calcu.totalCostMonth.toFixed(2)} out of ₱${goals.targetBill.toFixed(2)}). 
-                Try reducing appliance usage during peak hours to save more.
-                <div class="mt-2 p-2 border-left border-warning">
-                    <b class="text-warning">Energy Saving Tips:</b>
-                    <ul class="mb-0">
-                        ${getEnergyTips(2).map(tip => `<li>${tip}</li>`).join("")}
-                    </ul>
-                </div>
-            </div>
-            `
-        });
+    // Sort appliances by monthly kWh usage (highest first)
+    const sorted = [...calcu.items].sort((a, b) => b.kwhMonth - a.kwhMonth);
+
+    const tips = [];
+
+    for (let appl of sorted.slice(0, 3)) {
+        const applTips = applianceTips[appl.appliance] || [];
+        let numTips = applTips.length;
+
+        // If yellow (80–99%), only show 1–2 tips per appliance
+        if (percent < 100) numTips = Math.min(2, applTips.length);
+
+        for (let i = 0; i < numTips && tips.length < maxTips; i++) {
+            tips.push(`${appl.appliance}: ${applTips[i]}`);
+        }
+
+        if (tips.length >= maxTips) break; // stop at max
     }
 
-    // Meralco / info alert
+    return tips.length > 0 ? tips : baseTips.slice(0, maxTips);
+}
+
+// ---------------- Alerts ----------------
+if (percent >= 100) {
     alerts.push({
-        date: "Sep 2025",
-        message: `Current Meralco rate is <strong>₱13.09 per kWh</strong>.`,
-        color: "info",
-        icon: "fas fa-bolt",
+        date: new Date().toLocaleDateString(),
+        message: "You have <strong>exceeded your target bill!</strong>",
+        color: "danger",
+        icon: "fas fa-exclamation-triangle",
         details: `
         <div class="m-3">
-            Meralco’s residential rate for September 2025 is <strong>₱13.09 per kWh</strong>, 
-            which is <strong>₱0.50 higher</strong> compared to last month’s ₱12.59/kWh.
-            <div class="mt-2">
-                <strong>Impact for you:</strong> Your current consumption of <strong>${calcu.totalKwhMonth.toFixed(2)} kWh</strong>
-                would change your bill by about <strong>₱${(calcu.totalKwhMonth * 0.50).toFixed(2)}</strong> vs last month.
-            </div>
-            <div class="tips-box mt-2 p-2">
-                <b class="text-info">Energy-saving tip:</b>
+            Your current usage is <strong>₱${calcu.totalCostMonth.toFixed(2)}</strong>, 
+            compared to your target bill of <strong>₱${goals.targetBill.toFixed(2)}</strong>. 
+            Consider unplugging unused appliances or switching to energy-efficient devices.
+            <div class="mt-2 p-2 border-left border-danger">
+                <b class="text-danger">Energy Saving Tips:</b>
                 <ul class="mb-0">
-                    ${getEnergyTips(2).map(tip => `<li>${tip}</li>`).join("")}
+                    ${getEnergyTips(calcu, percent, 3).map(tip => `<li>${tip}</li>`).join("")}
                 </ul>
             </div>
-            <div class="mt-2"><a href="https://company.meralco.com.ph/news-and-advisories/lower-rates-september-2025" target="_blank" rel="noopener noreferrer">Read the advisory</a></div>
         </div>
         `
     });
+} else if (percent >= 80) {
+    alerts.push({
+        date: new Date().toLocaleDateString(),
+        message: "You're almost at your <strong>target bill.</strong>",
+        color: "warning",
+        icon: "fas fa-exclamation-circle",
+        details: `
+        <div class="m-3">
+            You’ve used <strong>${percent.toFixed(1)}%</strong> of your monthly budget 
+            (₱${calcu.totalCostMonth.toFixed(2)} out of ₱${goals.targetBill.toFixed(2)}). 
+            Try reducing appliance usage during peak hours to save more.
+            <div class="mt-2 p-2 border-left border-warning">
+                <b class="text-warning">Energy Saving Tips:</b>
+                <ul class="mb-0">
+                    ${getEnergyTips(calcu, percent, 2).map(tip => `<li>${tip}</li>`).join("")}
+                </ul>
+            </div>
+        </div>
+        `
+    });
+}
+
+// Meralco / info alert
+alerts.push({
+    date: "Sep 2025",
+    message: `Current Meralco rate is <strong>₱13.09 per kWh</strong>.`,
+    color: "info",
+    icon: "fas fa-bolt",
+    details: `
+    <div class="m-3">
+        Meralco’s residential rate for September 2025 is <strong>₱13.09 per kWh</strong>, 
+        which is <strong>₱0.50 higher</strong> compared to last month’s ₱12.59/kWh.
+        <div class="mt-2">
+            <strong>Impact for you:</strong> Your current consumption of <strong>${calcu.totalKwhMonth.toFixed(2)} kWh</strong>
+            would change your bill by about <strong>₱${(calcu.totalKwhMonth * 0.50).toFixed(2)}</strong> vs last month.
+        </div>
+        <div class="mt-2"><a href="https://company.meralco.com.ph/news-and-advisories/lower-rates-september-2025" target="_blank" rel="noopener noreferrer">Read the advisory</a></div>
+    </div>
+    `
+});
 
     // render
     if (alerts.length === 0) {

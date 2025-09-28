@@ -118,16 +118,6 @@ function renderEnergyTips() {
     const calcu = AppState.getCalculator();
     const goals = AppState.getGoals();
 
-    // Base tips (always neutral)
-    const baseTips = [
-        "Turn off lights when not in use.",
-        "Unplug appliances when idle.",
-        "Switch off lights and electrical appliances when not using them",
-        "Use natural light whenever possible.",
-        "Regularly maintain appliances to keep them efficient.",
-        "Close doors and windows when using air conditioning.",
-    ];
-
     if (!calcu.items || calcu.items.length === 0) {
         // No appliances: only base tips
         tipsContainer.innerHTML = baseTips.map(tip => `<li>${tip}</li>`).join("");

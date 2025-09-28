@@ -1,4 +1,13 @@
 // appState.js
+const baseTips = [
+        "Turn off lights when not in use.",
+        "Unplug appliances when idle.",
+        "Switch off lights and electrical appliances when not using them",
+        "Use natural light whenever possible.",
+        "Regularly maintain appliances to keep them efficient.",
+        "Close doors and windows when using air conditioning.",
+    ];
+
 const applianceTips = {
     "Air Conditioner": [
         "Set aircon to 25°C for efficiency.",
