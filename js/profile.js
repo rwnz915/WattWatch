@@ -21,6 +21,8 @@ function initProfilePage() {
     if (passwordBtn) passwordBtn.style.display = "none";
   }
 
+  initProfilePhoto(user);
+
   // Edit Name
   document.getElementById("editBtn").addEventListener("click", async () => {
     const result = await showEditModal("name", user);
@@ -123,6 +125,94 @@ function initProfilePage() {
       } catch (err) {
         showMessage("Error changing password: " + err.message);
       }
+    }
+  });
+}
+
+// ------------------- PROFILE PHOTO -------------------
+function initProfilePhoto(user) {
+  const profilePreview = document.getElementById('profilePreview');
+  const changePhotoBtn = document.getElementById('changePhotoBtn');
+
+  const modal = new bootstrap.Modal(document.getElementById('photoModal'));
+  const modalPreview = document.getElementById('modalPreview');
+  const modalFileInput = document.getElementById('modalFileInput');
+  const restoreDefaultBtn = document.getElementById('restoreDefaultBtn');
+  const savePhotoBtn = document.getElementById('savePhotoBtn');
+  const cancelPhotoBtn = document.querySelector('#photoModal .btn-secondary');
+
+  const defaultProfile = "img/undraw_profile.svg";
+
+  changePhotoBtn.addEventListener('click', () => {
+    modalPreview.src = profilePreview.src || defaultProfile;
+    modalFileInput.value = "";
+    modal.show();
+  });
+
+  cancelPhotoBtn.addEventListener('click', () => {
+    modal.hide();
+    //showMessage("Photo update canceled.");
+  });
+
+  // Preview new selected image
+  modalFileInput.addEventListener('change', () => {
+    const file = modalFileInput.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => modalPreview.src = e.target.result;
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Restore default
+  restoreDefaultBtn.addEventListener('click', () => {
+    modalPreview.src = defaultProfile;
+    modalFileInput.value = "";
+  });
+
+  // Save photo
+  savePhotoBtn.addEventListener('click', async () => {
+    const file = modalFileInput.files[0];
+    let imageData;
+
+    try {
+      if (!file && modalPreview.src === defaultProfile) {
+        imageData = null;
+      } else if (file) {
+        const reader = new FileReader();
+        reader.onload = async e => {
+          imageData = e.target.result;
+          profilePreview.src = imageData;
+
+          const res = await fetch("https://wattwatch-backend.onrender.com/api/auth/update-profile-image", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: user.id, profileImage: imageData })
+          });
+
+          const data = await res.json();
+          if (res.ok) showMessage("Profile photo updated successfully!");
+          else showMessage(data.message || "Failed to update photo.");
+
+          modal.hide();
+        };
+        reader.readAsDataURL(file);
+        return;
+      } else {
+        profilePreview.src = defaultProfile;
+        const res = await fetch("/api/auth/update-profile-image", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.id, profileImage: null })
+        });
+        const data = await res.json();
+        if (res.ok) showMessage("Profile photo reset to default!");
+        else showMessage(data.message || "Failed to reset photo.");
+      }
+
+      modal.hide();
+    } catch (err) {
+      showMessage("Error updating photo: " + err.message);
     }
   });
 }

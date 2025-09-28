@@ -62,5 +62,36 @@
   </div>
 </div>
 
+<!-- Change Photo Modal -->
+<div class="modal fade" id="photoModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0">
+      <div class="modal-header">
+        <h5 class="modal-title">Change Profile Photo</h5>
+      </div>
+      <div class="modal-body align-items-center d-flex gap-3">
+        <!-- Preview -->
+        <div>
+          <img id="modalPreview" src="img/undraw_profile.svg"
+               class="rounded-circle img-thumbnail"
+               style="width:120px;height:120px;object-fit:cover;">
+        </div>
+        <!-- Controls -->
+        <div class="d-flex flex-column gap-2 m-3">
+          <label class="btn btn-outline-primary w-100">
+            Browse
+            <input type="file" id="modalFileInput" accept="image/*" class="d-none">
+          </label>
+          <button id="restoreDefaultBtn" class="btn btn-outline-secondary btn-sm">Restore Default</button>
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button id="savePhotoBtn" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Profile JS -->
 <script src="js/profile.js"></script>
