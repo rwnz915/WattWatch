@@ -123,7 +123,7 @@ alerts.push({
             <div class="d-flex align-items-center justify-content-between toggle-alert" 
                  style="cursor:pointer;" data-target="alert-${index}" role="button" aria-expanded="false">
                 <div class="d-flex align-items-center">
-                    <div class="icon-circle bg-${alert.color} text-white p-2 rounded-circle mr-3 m-2">
+                    <div class="icon-circle bg-${alert.color} text-white rounded-circle mr-3 m-2">
                         <i class="alert-main-icon ${alert.icon}" aria-hidden="true"></i>
                     </div>
                     <div>

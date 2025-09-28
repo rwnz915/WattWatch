@@ -58,5 +58,17 @@
   color: #ffc107 !important; /* Bootstrap yellow */
 }
 
+.icon-circle {
+    width: 40px;         /* fixed width */
+    height: 40px;        /* fixed height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;      /* prevents shrinking in flex containers */
+    padding: 0;          /* remove extra padding */
+    margin-right: 0.5rem; /* optional spacing */
+    font-size: 1.2rem;   /* icon size */
+}
+
 
 
