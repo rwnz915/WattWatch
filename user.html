@@ -359,6 +359,16 @@
                 });
             }
 
+            // Electricity rate info (always show latest rate)
+            alerts.push({
+                date: "Sep 2025",
+                message: `Current Meralco rate is <strong>₱13.09 per kWh</strong> (effective Sept 9–29, 2025). 
+                      <a href="https://company.meralco.com.ph/news-and-advisories/lower-rates-september-2025" 
+                         target="_blank" rel="noopener noreferrer">Source</a>`,
+                icon: "fas fa-bolt",
+                color: "bg-info"
+            });
+
             // Display alerts
             if (alerts.length === 0) {
                 const noNotifItem = document.createElement("div");
