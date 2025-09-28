@@ -320,7 +320,7 @@
         }
 
         const topbarImg = document.querySelector(".img-profile.rounded-circle");
-        if (topbarImg) topbarImg.src = user.profileImage;
+        if (topbarImg) topbarImg.src = userInfo.profileImage;
 
         document.getElementById("logoutBtn").addEventListener("click", () => {
             clearUserInfo(); // clear localStorage + sessionStorage
