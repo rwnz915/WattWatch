@@ -387,8 +387,18 @@ async function initCalculatorPage() {
 
     const dailyKWh = (wattage / 1000) * hours;
     const dailyCost = dailyKWh * rate;
+    const weeklyCost = dailyCost * 7;
     const monthlyCost = dailyCost * 30;
-    result.textContent = `Daily Cost: ₱${dailyCost.toFixed(2)}, Monthly Cost: ₱${monthlyCost.toFixed(2)}`;
+    result.innerHTML = `${appliance} - ${type} - ${model}:<br>` +
+    `Cost/day = ₱${dailyCost.toFixed(2)}<br>` +
+    `Cost/week = ₱${weeklyCost.toFixed(2)}<br>` +
+    `Cost/month = ₱${monthlyCost.toFixed(2)}`;
+
+    /*result.textContent =
+    `${appliance} - ${type} - ${model}:<br>` +
+    `Cost/day = ₱${trim(dailyCost.toFixed(2))}<br>` +
+    `Cost/week = ₱${trim(weeklyCost)}<br>` +
+    `Cost/month = ₱${trim(monthlyCost)}`;*/
 
     // ✅ Reset form fields
     form.reset();
