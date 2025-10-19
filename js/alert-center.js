@@ -91,19 +91,20 @@ if (percent >= 100) {
 
 // Meralco / info alert
 alerts.push({
-    date: "Sep 2025",
-    message: `Current Meralco rate is <strong>₱13.09 per kWh</strong>.`,
+    date: "Oct 2025",
+    message: `Meralco rate increased to <strong>₱13.32 per kWh</strong>.`,
     color: "info",
     icon: "fas fa-bolt",
     details: `
     <div class="m-3">
-        Meralco’s residential rate for September 2025 is <strong>₱13.09 per kWh</strong>, 
-        which is <strong>₱0.50 higher</strong> compared to last month’s ₱12.59/kWh.
+        Meralco announced a <strong>₱0.23 per kWh</strong> increase for October 2025, 
+        bringing the rate to <strong>₱13.32 per kWh</strong>.<br>
+        The rise was mainly due to higher <strong>generation charges</strong> from 
+        Independent Power Producers and Power Supply Agreements.  
         <div class="mt-2">
-            <strong>Impact for you:</strong> Your current consumption of <strong>${calcu.totalKwhMonth.toFixed(2)} kWh</strong>
-            would change your bill by about <strong>₱${(calcu.totalKwhMonth * 0.50).toFixed(2)}</strong> vs last month.
+            <a href="https://company.meralco.com.ph/news-and-advisories/higher-rates-october#:~:text=MANILA%2C%20PHILIPPINES%2C%2013%20OCTOBER%202025,a%20typical%20household%20to%20P13."
+               target="_blank" rel="noopener noreferrer">Read full advisory</a>
         </div>
-        <div class="mt-2"><a href="https://company.meralco.com.ph/news-and-advisories/lower-rates-september-2025" target="_blank" rel="noopener noreferrer">Read the advisory</a></div>
     </div>
     `
 });

@@ -40,8 +40,8 @@ async function loadPage(page, pushState = true) {
           initCalculatorPage();
       }
 
-      if (page.includes("dashboard.html") && typeof initDashboardPage === "function") {
-          initDashboardPage();
+      if (page.includes("dashboard_admin.html") && typeof initDashboardPage === "function") {
+          initAdminDashboardPage();
       }
 
       // Init page-specific scripts
