@@ -51,6 +51,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // ------------------ REGISTER FORM ------------------
+    const passwordInput = document.getElementById('exampleInputPassword');
+    const repeatPasswordInput = document.getElementById('exampleRepeatPassword');
+    if (passwordInput) passwordInput.maxLength = 12;
+    if (repeatPasswordInput) repeatPasswordInput.maxLength = 12;
+
     const registerBtn = document.getElementById('registerBtn');
     if (!registerBtn) return;
 
@@ -60,11 +65,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const firstName = document.getElementById('exampleFirstName').value.trim();
         const lastName = document.getElementById('exampleLastName').value.trim();
         const email = document.getElementById('exampleInputEmail').value.trim();
-        const password = document.getElementById('exampleInputPassword').value;
-        const repeatPassword = document.getElementById('exampleRepeatPassword').value;
+        const password = passwordInput.value;
+        const repeatPassword = repeatPasswordInput.value;
 
         if (!firstName || !lastName || !email || !password || !repeatPassword) {
             showMessage("Please fill in all fields.");
+            return;
+        }
+
+        if (password.length > 12) {
+            showMessage("Password must not exceed 12 characters.");
             return;
         }
 
