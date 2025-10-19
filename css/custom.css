@@ -3,6 +3,13 @@
   transition: opacity 0.1s ease-in-out;
 }
 
+/* Deep card shadow for login page */
+.card.deep-shadow {
+  box-shadow:
+    0 5px 10px rgba(0, 0, 0, 0.15),
+    0 0 10px rgba(0, 0, 0, 0.1);
+}
+
 #main-content.fade-out {
   opacity: 0;
 }
