@@ -1,3 +1,14 @@
+const originalFetch = window.fetch;
+window.fetch = async function (...args) {
+  NProgress.start();
+  try {
+    const res = await originalFetch(...args);
+    return res;
+  } finally {
+    NProgress.done();
+  }
+};
+
 let loginEmailInput = document.getElementById("exampleInputEmail");
 let loginPasswordInput = document.getElementById("exampleInputPassword");
 let loginBtn = document.getElementById("loginBtn");
