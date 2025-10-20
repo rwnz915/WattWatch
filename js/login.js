@@ -50,7 +50,7 @@ window.addEventListener("DOMContentLoaded", async () => {
           try { await updateAppStateCalculations(user.id); } catch (err) { console.warn("Failed to update calculations:", err); }
         }
 
-        AppState.setElectricityRate(13.09);
+        AppState.setElectricityRate(13.32);
 
         if (user.page) {
           window.location.href = user.page;
@@ -110,7 +110,7 @@ async function signIn() {
 
       setUserInfo(userData, rememberMeInput && rememberMeInput.checked);
 
-      AppState.setElectricityRate(13.09);
+      AppState.setElectricityRate(13.32);
 
       if (typeof loadSettings === "function") {
         try { await loadSettings(); } catch (err) { console.warn("Failed to load settings after login:", err); }
