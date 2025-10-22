@@ -77,5 +77,19 @@
     font-size: 1.2rem;   /* icon size */
 }
 
+/* Make NProgress bar thicker and more visible */
+  #nprogress .bar {
+    background: #2196F3 !important;  /* Bright blue */
+    height: 5px !important;          /* ← increase thickness */
+  }
 
+  /* Optional: add a glowing trail */
+  #nprogress .peg {
+    box-shadow: 0 0 10px #2196F3, 0 0 5px #2196F3 !important;
+  }
+
+  /* Optional: remove spinner (circle) */
+  #nprogress .spinner {
+    display: none !important;
+  }
 

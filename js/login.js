@@ -1,3 +1,14 @@
+const originalFetch = window.fetch;
+window.fetch = async function (...args) {
+  NProgress.start();
+  try {
+    const res = await originalFetch(...args);
+    return res;
+  } finally {
+    NProgress.done();
+  }
+};
+
 let loginEmailInput = document.getElementById("exampleInputEmail");
 let loginPasswordInput = document.getElementById("exampleInputPassword");
 let loginBtn = document.getElementById("loginBtn");
@@ -50,7 +61,7 @@ window.addEventListener("DOMContentLoaded", async () => {
           try { await updateAppStateCalculations(user.id); } catch (err) { console.warn("Failed to update calculations:", err); }
         }
 
-        AppState.setElectricityRate(13.09);
+        AppState.setElectricityRate(13.32);
 
         if (user.page) {
           window.location.href = user.page;
@@ -110,7 +121,7 @@ async function signIn() {
 
       setUserInfo(userData, rememberMeInput && rememberMeInput.checked);
 
-      AppState.setElectricityRate(13.09);
+      AppState.setElectricityRate(13.32);
 
       if (typeof loadSettings === "function") {
         try { await loadSettings(); } catch (err) { console.warn("Failed to load settings after login:", err); }
