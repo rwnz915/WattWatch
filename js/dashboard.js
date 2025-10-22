@@ -40,7 +40,7 @@ function renderAppliancePieChart() {
 
     const labels = sorted.map(a => a.appliance);
     const data = sorted.map(a => Math.round((a.wattage / 1000) * a.hours * 30 * a.rate));
-    const colors = ["#4e73df", "#1cc88a", "#36b9cc", "#f6c23e", "#e74a3b", "#858796"];
+    const colors = ["#4E73DF", "#1cc88a", "#36b9cc", "#f6c23e", "#e74a3b", "#858796"];
 
     // Create legend
     container.innerHTML = labels.map((label, i) => `

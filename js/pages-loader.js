@@ -38,6 +38,7 @@ async function loadPage(page, pushState = true) {
 
       //////////// Init page Initialization \\\\\\\\\\\\\\\
       initUserPage();
+      //initTipBox();
 
       if (page.includes("calculator.html") && typeof initCalculatorPage === "function") {
           initCalculatorPage();
@@ -103,6 +104,8 @@ window.addEventListener("popstate", (event) => {
 document.addEventListener("DOMContentLoaded", function () {
   const savedPage = localStorage.getItem("currentPage") || "pages/dashboard.html";
   loadPage(savedPage);
+
+  initTipBox();
 
   // Active nav highlight
   document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));

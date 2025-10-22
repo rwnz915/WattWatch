@@ -127,6 +127,8 @@ function initProfilePage() {
       }
     }
   });
+
+
 }
 
 // ------------------- PROFILE PHOTO -------------------

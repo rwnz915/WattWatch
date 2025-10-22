@@ -51,6 +51,32 @@ const applianceData = {
   }
 };
 
+// Add new appliances
+applianceData["Air Fryer"] = {
+  "Standard": ["Philips Airfryer HD9641", "Imarflex AF-1100", "Hanabishi AF-12"]
+};
+
+applianceData["Oven"] = {
+  "Convection": ["Panasonic NB-H3203", "Electrolux EOB2100", "Sharp R-33A"],
+  "Electric": ["Imarflex IEO-1000", "Hanabishi EO-20"]
+};
+
+applianceData["Coffee Maker"] = {
+  "Drip": ["Philips HD7457", "Black+Decker DCM18", "Keurig K-Mini"],
+  "Espresso": ["Breville Barista Express", "DeLonghi EC155"]
+};
+
+applianceData["Clothes Iron"] = {
+  "Steam": ["Philips GC1905", "Tefal FV3950", "Panasonic NI-E660"],
+  "Dry": ["Imarflex IF-200", "Hanabishi HI-100"]
+};
+
+applianceData["Water Dispenser"] = {
+  "Hot & Cold": ["Panasonic PWP-3601", "Imarflex WD-180", "Hanabishi WD-90"],
+  "Cold Only": ["Sharp WD-C20", "Union WD-50"]
+};
+
+
 // ---------- Default values for appliances ----------
 const applianceDefaults = {
   // Aircon
@@ -146,6 +172,40 @@ const applianceDefaults = {
   "Philips Tornado 15W": { wattage: 15, hours: 6, rate: AppState.getElectricityRate() }
 };
 
+// Air Fryer
+applianceDefaults["Philips Airfryer HD9641"] = { wattage: 1425, hours: 0.5, rate: AppState.getElectricityRate() };
+applianceDefaults["Imarflex AF-1100"] = { wattage: 1200, hours: 0.5, rate: AppState.getElectricityRate() };
+applianceDefaults["Hanabishi AF-12"] = { wattage: 1300, hours: 0.5, rate: AppState.getElectricityRate() };
+
+// Oven
+applianceDefaults["Panasonic NB-H3203"] = { wattage: 1800, hours: 1, rate: AppState.getElectricityRate() };
+applianceDefaults["Electrolux EOB2100"] = { wattage: 2000, hours: 1, rate: AppState.getElectricityRate() };
+applianceDefaults["Sharp R-33A"] = { wattage: 1500, hours: 1, rate: AppState.getElectricityRate() };
+applianceDefaults["Imarflex IEO-1000"] = { wattage: 1600, hours: 1, rate: AppState.getElectricityRate() };
+applianceDefaults["Hanabishi EO-20"] = { wattage: 1400, hours: 1, rate: AppState.getElectricityRate() };
+
+// Coffee Maker
+applianceDefaults["Philips HD7457"] = { wattage: 1000, hours: 0.5, rate: AppState.getElectricityRate() };
+applianceDefaults["Black+Decker DCM18"] = { wattage: 900, hours: 0.5, rate: AppState.getElectricityRate() };
+applianceDefaults["Keurig K-Mini"] = { wattage: 1200, hours: 0.5, rate: AppState.getElectricityRate() };
+applianceDefaults["Breville Barista Express"] = { wattage: 1600, hours: 0.5, rate: AppState.getElectricityRate() };
+applianceDefaults["DeLonghi EC155"] = { wattage: 1100, hours: 0.5, rate: AppState.getElectricityRate() };
+
+// Clothes Iron
+applianceDefaults["Philips GC1905"] = { wattage: 1200, hours: 1, rate: AppState.getElectricityRate() };
+applianceDefaults["Tefal FV3950"] = { wattage: 1300, hours: 1, rate: AppState.getElectricityRate() };
+applianceDefaults["Panasonic NI-E660"] = { wattage: 1250, hours: 1, rate: AppState.getElectricityRate() };
+applianceDefaults["Imarflex IF-200"] = { wattage: 1000, hours: 1, rate: AppState.getElectricityRate() };
+applianceDefaults["Hanabishi HI-100"] = { wattage: 1100, hours: 1, rate: AppState.getElectricityRate() };
+
+// Water Dispenser
+applianceDefaults["Panasonic PWP-3601"] = { wattage: 500, hours: 8, rate: AppState.getElectricityRate() };
+applianceDefaults["Imarflex WD-180"] = { wattage: 450, hours: 8, rate: AppState.getElectricityRate() };
+applianceDefaults["Hanabishi WD-90"] = { wattage: 400, hours: 8, rate: AppState.getElectricityRate() };
+applianceDefaults["Sharp WD-C20"] = { wattage: 350, hours: 8, rate: AppState.getElectricityRate() };
+applianceDefaults["Union WD-50"] = { wattage: 300, hours: 8, rate: AppState.getElectricityRate() };
+
+
 // ---------- DOM elements ----------
 const applianceSelect = document.getElementById("appliance");
 const typeSelect = document.getElementById("type");
@@ -225,6 +285,19 @@ function setupCascadingDropdowns() {
 }
 
 // ---------- Calculator ----------
+
+function populateApplianceDropdown() {
+  const applianceSelect = document.getElementById("appliance");
+  applianceSelect.innerHTML = '<option value="">-- Select Appliance --</option>';
+
+  Object.keys(applianceData).forEach(appliance => {
+    const opt = document.createElement("option");
+    opt.value = appliance;
+    opt.textContent = appliance;
+    applianceSelect.appendChild(opt);
+  });
+}
+
 let total = 0;
 let historyItems = [];
 
@@ -303,6 +376,7 @@ function renderHistory() {
 
 // ---------- Init Calculator Page ----------
 async function initCalculatorPage() {
+  populateApplianceDropdown();
   setupCascadingDropdowns();
   preventInvalidNumberInput();
   const applianceSelect = document.getElementById("appliance");

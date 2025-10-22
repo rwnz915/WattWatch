@@ -140,7 +140,7 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <form
+                    <!-- <form
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
                             <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
@@ -151,7 +151,14 @@
                                 </button>
                             </div>
                         </div>
-                    </form>
+                    </form>-->
+
+                    <!-- Energy Tip Display -->
+                    <div id="energyTipBox" class="ml-3 my-auto px-3 py-2 rounded shadow-sm border-left-primary border bg-light">
+                        <span id="energyTipText" class="text-dark font-weight-semibold small">
+                            💡 "Turn off lights when not in use."
+                        </span>
+                    </div>
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -434,6 +441,64 @@
 
             updateAlerts(calcu, goals);
         }
+
+        let tipInterval;
+let lastTipIndex = -1; // to remember the last displayed tip
+
+function initTipBox() {
+  const energyTips = [
+    "💡 Turn off lights when not in use.",
+    "⚡ Unplug chargers when your device is full.",
+    "🌞 Use natural light during the day.",
+    "❄️ Keep refrigerator doors closed tightly.",
+    "🌿 Use energy-efficient LED bulbs.",
+    "🔥 Cook with lids on to save energy.",
+    "🌬️ Clean your air conditioner filters regularly.",
+    "🔌 Turn off appliances completely instead of standby.",
+    "🏡 Set air conditioning to 25°C for efficiency.",
+    "🧺 Wash full loads of laundry to save water and power.",
+    "🌱 Plant shade trees to reduce cooling costs.",
+    "☀️ Dry clothes under the sun instead of using a dryer.",
+    "🖥️ Turn off your computer monitor when away.",
+    "📺 Reduce screen brightness to save energy.",
+    "🍳 Match the pot size to the burner on your stove.",
+    "🕯️ Use candles for mood lighting occasionally.",
+    "📦 Defrost your freezer regularly for better efficiency.",
+    "🚗 Carpool or walk short distances to reduce fuel use.",
+    "📴 Set devices to power-saving mode when possible."
+  ];
+
+  const tipBox = document.getElementById("energyTipBox");
+  if (!tipBox) return;
+
+  function getRandomTipIndex() {
+    let newIndex;
+    do {
+      newIndex = Math.floor(Math.random() * energyTips.length);
+    } while (newIndex === lastTipIndex && energyTips.length > 1);
+    lastTipIndex = newIndex;
+    return newIndex;
+  }
+
+  function updateTip() {
+    tipBox.classList.add("slide-up");
+    setTimeout(() => {
+      const randomTip = energyTips[getRandomTipIndex()];
+      tipBox.textContent = randomTip;
+      tipBox.classList.remove("slide-up");
+      tipBox.classList.add("slide-down");
+      setTimeout(() => tipBox.classList.remove("slide-down"), 400);
+    }, 400);
+  }
+
+  updateTip();
+
+  if (tipInterval) clearInterval(tipInterval);
+  tipInterval = setInterval(updateTip, 10000); // change tip every 10s
+}
+
+
+
         //initUserPage();
     </script>
 

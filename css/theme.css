@@ -23,7 +23,7 @@ html.dark-mode .card {
 }
 
 /* Keep Bootstrap border-left-* utility colors */
-html.dark-mode .card.border-left-primary    { border-left: .25rem solid #4e73df !important; }
+html.dark-mode .card.border-left-primary    { border-left: .25rem solid #4E73DF !important; }
 html.dark-mode .card.border-left-success    { border-left: .25rem solid #1cc88a !important; }
 html.dark-mode .card.border-left-info       { border-left: .25rem solid #36b9cc !important; }
 html.dark-mode .card.border-left-warning    { border-left: .25rem solid #f6c23e !important; }
@@ -195,4 +195,39 @@ html.dark-mode .modal-footer .btn-secondary {
 
 html.dark-mode .modal-footer .btn-secondary:hover {
     background-color: #666;
+}
+
+/* 💡 Compact dark mode tip box (no hover) */
+html.dark-mode #energyTipBox {
+    background-color: #24262b !important;   /* Deep gray tone */
+    color: #f5f5f5 !important;              /* Bright text for contrast */
+    border: 1.5px solid #4e73df !important; /* Slightly thinner accent border */
+    box-shadow: 0 0 8px rgba(78, 115, 223, 0.3) !important; /* Softer glow */
+    border-radius: 8px !important;
+    padding: 10px 12px !important;          /* Reduced padding */
+    font-size: 0.9rem !important;           /* Slightly smaller text */
+    text-align: center !important;
+    font-weight: 600 !important;
+    max-width: 400px !important;            /* Optional: limits width */
+}
+
+/* ---------- Responsive Adjustments ---------- */
+@media (max-width: 992px) {
+  html.dark-mode #energyTipBox {
+    font-size: 0.8rem !important;
+    padding: 5px 8px !important;
+    width: 95% !important;
+    border-top: 2px solid #4e73df !important;
+    background-color: #1e1f22 !important; /* keep dark */
+  }
+}
+
+@media (max-width: 576px) {
+  html.dark-mode #energyTipBox {
+    font-size: 0.7rem !important;
+    padding: 4px 6px !important;
+    width: 90% !important;
+    border-top: 2px solid #4e73df !important;
+    background-color: #1e1f22 !important;
+  }
 }

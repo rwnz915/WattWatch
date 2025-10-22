@@ -93,3 +93,54 @@
     display: none !important;
   }
 
+/* 💡 Light mode tip box */
+#energyTipBox {
+    background-color: #f8f9fc !important;   /* Light card background */
+    color: #333 !important;                 /* Dark text for contrast */
+    border: 1.5px solid #4e73df !important; /* Blue accent border */
+    box-shadow: 0 0 8px rgba(78, 115, 223, 0.2) !important; /* Subtle glow */
+    border-radius: 8px !important;
+    padding: 10px 12px !important;          /* Compact padding */
+    font-size: 0.9rem !important;
+    text-align: center !important;
+    font-weight: 600 !important;
+    max-width: 400px !important;
+}
+
+/* 🔄 Slide Animations */
+@keyframes slideUp {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-100%); opacity: 0; }
+}
+
+@keyframes slideDown {
+  0% { transform: translateY(100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.slide-up {
+  animation: slideUp 0.4s ease forwards;
+}
+
+.slide-down {
+  animation: slideDown 0.4s ease forwards;
+}
+
+/* ---------- Responsive Adjustments ---------- */
+@media (max-width: 992px) {
+  #energyTipBox {
+    font-size: 0.8rem !important;
+    padding: 5px 8px !important;
+    width: 95% !important;
+    border-top: 2px solid #4e73df !important;
+  }
+}
+
+@media (max-width: 576px) {
+  #energyTipBox {
+    font-size: 0.7rem !important;
+    padding: 4px 6px !important;
+    width: 90% !important;
+    border-top: 2px solid #4e73df !important;
+  }
+}
