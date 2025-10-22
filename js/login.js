@@ -4,7 +4,7 @@ let loginBtn = document.getElementById("loginBtn");
 let rememberMeInput = document.getElementById("customCheck"); // checkbox element
 let googleLoginBtn = document.getElementById("googleLoginBtn"); // Google button
 
-loginPasswordInput.maxLength = 12;
+loginPasswordInput.maxLength = 16;
 
 
 // ----------------- PASSWORD TOGGLE -----------------

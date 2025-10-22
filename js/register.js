@@ -53,8 +53,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // ------------------ REGISTER FORM ------------------
     const passwordInput = document.getElementById('exampleInputPassword');
     const repeatPasswordInput = document.getElementById('exampleRepeatPassword');
-    if (passwordInput) passwordInput.maxLength = 12;
-    if (repeatPasswordInput) repeatPasswordInput.maxLength = 12;
+    if (passwordInput) passwordInput.maxLength = 16;
+    if (repeatPasswordInput) repeatPasswordInput.maxLength = 16;
 
     const registerBtn = document.getElementById('registerBtn');
     if (!registerBtn) return;
