@@ -1,16 +1,20 @@
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800">Billing History</h1>
-
-    <div class="mb-3 d-flex justify-content-start">
-        <button class="btn btn-danger btn-sm" id="clearHistoryBtn">Clear All</button>
+<!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
     </div>
 
-    <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover" style="border-top-width: 0.2px !important; border-bottom-width: 0.2px !important;">
+<div class="col-lg-12 mb-4">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-info">History</h6>
+            <button class="btn btn-outline-danger btn-sm" id="clearHistoryBtn">Clear All</button>
+        </div>
 
-                    <thead>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0 small">
+                    <thead >
                         <tr>
                             <th>Month</th>
                             <th>KWh Used</th>
@@ -18,13 +22,21 @@
                             <th style="width: 120px;">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="historyBody"></tbody>
+                    <tbody id="historyBody">
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-3">
+                                No billing history yet
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
+        </div>
 
-            <!-- Pagination -->
+        <!-- Pagination -->
+        <div class="card-footer py-2 bg-white">
             <nav>
-                <ul class="pagination justify-content-center" id="pagination"></ul>
+                <ul class="pagination justify-content-center mb-0" id="pagination"></ul>
             </nav>
         </div>
     </div>
@@ -33,15 +45,15 @@
 <!-- Full Bill Details Modal -->
 <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-primary">Bill Details</h5>
-                <button class="close" data-dismiss="modal">&times;</button>
+        <div class="modal-content shadow">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">Bill Details</h5>
+                <button class="close text-white" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body" id="modalContent"></div>
         </div>
     </div>
 </div>
+</div>
 
-<!-- scripts -->
 <script src="js/history.js"></script>

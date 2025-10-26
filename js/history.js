@@ -113,8 +113,9 @@ async function loadCurrentAndHistory() {
         hist.forEach(h => {
             const id = h.id;
             const monthLabel = h.monthLabel || h.month_label;
-            const kwh = h.kwhUsed || h.kwh_used || 0;
-            const total = h.totalAmount || h.total_amount || h.total || 0;
+            const kwh = h.kwhUsed || h.kwh_used || h.totalKwh || 0;
+            const total = h.totalAmount || h.total_amount || h.totalCost || 0;
+
 
             tbody.innerHTML += `
                 <tr>
@@ -139,8 +140,8 @@ async function viewHistoryDetails(id) {
     const bill = await res.json();
 
     const monthLabel = bill.monthLabel || bill.month_label;
-    const kwh = bill.kwhUsed || bill.kwh_used || 0;
-    const total = bill.totalAmount || bill.total_amount || bill.total || 0;
+    const kwh = bill.kwhUsed || bill.kwh_used || bill.totalKwh || 0;
+    const total = bill.totalAmount || bill.total_amount || bill.totalCost || 0;
 
     document.getElementById("modalContent").innerHTML = `
         <p><strong>${monthLabel}</strong></p>
