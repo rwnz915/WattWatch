@@ -7,6 +7,53 @@
   <script src="js/settings.js"></script>
     <script src="js/appState.js"></script>
   <script>
+    async function initializeUpdate(userId) {
+    //console.log("Initializing...");
+    AppState.setElectricityRate(13.32);
+
+    try {
+        if (typeof ensureMonthRollover === "function") {
+            await ensureMonthRollover();
+        }
+    } catch (err) {
+        console.warn("⚠️ ensureMonthRollover failed:", err);
+    }
+
+    try {
+        if (typeof loadCurrentAndHistory === "function") {
+            await loadCurrentAndHistory();
+        }
+    } catch (err) {
+        console.warn("⚠️ loadCurrentAndHistory failed:", err);
+    }
+
+    try {
+        if (typeof loadSettings === "function") {
+            await loadSettings();
+        }
+    } catch (err) {
+        console.warn("⚠️ loadSettings failed:", err);
+    }
+
+    try {
+        if (typeof updateAppStateGoals === "function") {
+            await updateAppStateGoals(userId);
+        }
+    } catch (err) {
+        console.warn("⚠️ updateAppStateGoals failed:", err);
+    }
+
+    try {
+        if (typeof updateAppStateCalculations === "function") {
+            await updateAppStateCalculations(userId);
+        }
+    } catch (err) {
+        console.warn("⚠️ updateAppStateCalculations failed:", err);
+    }
+
+    //console.log("initialization complete.");
+}
+
     async function handleGoogleCallback() {
       const params = new URLSearchParams(window.location.search);
       const code = params.get("code");
