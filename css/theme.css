@@ -242,3 +242,58 @@ html.dark-mode #content-wrapper textarea.form-control {
     box-shadow: none !important;
 }
 
+/* ✅ Billing History Table Fix - Text Visibility */
+html.dark-mode #historyTable td,
+html.dark-mode #historyTable th {
+    color: #fff !important;
+}
+
+/* Borders slightly visible in dark mode */
+html.dark-mode #historyTable {
+    border-color: #444 !important;
+}
+
+/* Row divider visibility */
+html.dark-mode #historyTable tbody tr {
+    border-color: #555 !important;
+}
+
+/* Action Button Styling in Dark */
+html.dark-mode #historyTable .btn-primary {
+    background-color: #4e73df !important;
+    border-color: #4e73df !important;
+    color: #fff !important;
+}
+
+html.dark-mode #historyTable .btn-danger {
+    background-color: #e74a3b !important;
+    border-color: #e74a3b !important;
+    color: #fff !important;
+}
+
+/* Hover to indicate interactivity */
+html.dark-mode #historyTable tbody tr:hover {
+    background-color: #3a3b45 !important;
+}
+
+/* ✅ Pagination styling */
+html.dark-mode .pagination .page-link {
+    background-color: #2c2c2c !important;
+    color: #f1f1f1 !important;
+    border-color: #555 !important;
+}
+html.dark-mode .pagination .page-link:hover {
+    background-color: #444 !important;
+}
+
+/* ✅ Modal content text brightness fix */
+html.dark-mode #modalContent p {
+    color: #fff !important;
+}
+
+/* Dark mode table text styling */
+html.dark-mode #historyTable td,
+html.dark-mode #historyTable th {
+    color: #ffffff !important;
+}
+

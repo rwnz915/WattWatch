@@ -160,3 +160,24 @@
     border-width: 0.5px !important;
 }
 
+/* Fix white bottom strip */
+html.dark-mode .card-footer,
+html.dark-mode .table-responsive,
+html.dark-mode .custom-table {
+    background-color: #2c2c2c !important;
+}
+
+/* Remove any accidental white borders from table */
+html.dark-mode .custom-table,
+html.dark-mode .custom-table tr,
+html.dark-mode .custom-table th,
+html.dark-mode .custom-table td {
+    border-color: #44464b !important;
+}
+
+#historyTable td,
+#historyTable th {
+    font-size: 0.95rem;
+}
+
+

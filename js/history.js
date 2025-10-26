@@ -106,24 +106,26 @@ async function loadCurrentAndHistory() {
         tbody.innerHTML = "";
 
         if (!hist?.length) {
-            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No billing history</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No history</td></tr>`;
             return;
         }
 
         hist.forEach(h => {
             const id = h.id;
-            const monthLabel = h.monthLabel || h.month_label;
+            const monthLabel = h.monthLabel || h.month_label || "";
+            let [monthName, year] = monthLabel.split(" ");
             const kwh = h.kwhUsed || h.kwh_used || h.totalKwh || 0;
             const total = h.totalAmount || h.total_amount || h.totalCost || 0;
 
 
             tbody.innerHTML += `
                 <tr>
-                    <td>${monthLabel}</td>
+                    <td>${year}</td>
+                    <td>${monthName}</td>
                     <td>${Number(kwh).toFixed(2)} kWh</td>
                     <td>₱${Number(total).toFixed(2)}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary" onclick="viewHistoryDetails(${id})">View</button>
+                        <button class="btn btn-sm btn-primary mb-2 mt-1" onclick="viewHistoryDetails(${id})">View</button>
                         <button class="btn btn-sm btn-danger" onclick="deleteHistory(${id})">Delete</button>
                     </td>
                 </tr>`;
@@ -154,7 +156,7 @@ async function viewHistoryDetails(id) {
 
 // ✅ Delete single record
 async function deleteHistory(id) {
-    if (!confirm("Delete this bill?")) return;
+    if (!showConfirm("Delete this history?")) return;
     await fetch(`${API_BASE}/${id}`, { method: "DELETE" });
     await loadCurrentAndHistory();
 }
@@ -162,7 +164,7 @@ async function deleteHistory(id) {
 // ✅ Clear all (if button exists)
 document.addEventListener("click", async e => {
     if (e.target.id === "clearHistoryBtn") {
-        if (!confirm("Clear ALL billing history?")) return;
+        if (!showConfirm("Clear ALL history?")) return;
 
         const user = getUserInfo();
         await fetch(`${API_BASE}/history/${user.id}`, { method: "DELETE" });
