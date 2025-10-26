@@ -40,6 +40,53 @@ passwordToggle.addEventListener("click", () => {
     }
 });
 
+async function initializeUpdate(userId) {
+    //console.log("Initializing...");
+    AppState.setElectricityRate(13.32);
+
+    try {
+        if (typeof ensureMonthRollover === "function") {
+            await ensureMonthRollover();
+        }
+    } catch (err) {
+        console.warn("⚠️ ensureMonthRollover failed:", err);
+    }
+
+    try {
+        if (typeof loadCurrentAndHistory === "function") {
+            await loadCurrentAndHistory();
+        }
+    } catch (err) {
+        console.warn("⚠️ loadCurrentAndHistory failed:", err);
+    }
+
+    try {
+        if (typeof loadSettings === "function") {
+            await loadSettings();
+        }
+    } catch (err) {
+        console.warn("⚠️ loadSettings failed:", err);
+    }
+
+    try {
+        if (typeof updateAppStateGoals === "function") {
+            await updateAppStateGoals(userId);
+        }
+    } catch (err) {
+        console.warn("⚠️ updateAppStateGoals failed:", err);
+    }
+
+    try {
+        if (typeof updateAppStateCalculations === "function") {
+            await updateAppStateCalculations(userId);
+        }
+    } catch (err) {
+        console.warn("⚠️ updateAppStateCalculations failed:", err);
+    }
+
+    //console.log("initialization complete.");
+}
+
 // ----------------- AUTO-LOGIN -----------------
 window.addEventListener("DOMContentLoaded", async () => {
   try {
@@ -49,19 +96,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         const resp = await fetch("https://wattwatch-backend.onrender.com/health/ping");
         if (!resp.ok) throw new Error("server not reachable");
 
-        if (typeof loadSettings === "function") {
-          try { await loadSettings(); } catch (err) { console.warn("Failed to load settings:", err); }
-        }
-
-        if (typeof updateAppStateGoals === "function") {
-          try { await updateAppStateGoals(user.id); } catch (err) { console.warn("Failed to update goals:", err); }
-        }
-
-        if (typeof updateAppStateCalculations === "function") {
-          try { await updateAppStateCalculations(user.id); } catch (err) { console.warn("Failed to update calculations:", err); }
-        }
-
-        AppState.setElectricityRate(13.32);
+        initializeUpdate(user.id);
 
         if (user.page) {
           window.location.href = user.page;
@@ -121,23 +156,7 @@ async function signIn() {
 
       setUserInfo(userData, rememberMeInput && rememberMeInput.checked);
 
-      AppState.setElectricityRate(13.32);
-
-      if (typeof loadSettings === "function") {
-        try { await loadSettings(); } catch (err) { console.warn("Failed to load settings after login:", err); }
-      }
-
-      if (typeof updateAppStateGoals === "function") {
-          try { await updateAppStateGoals(data.id); } catch (err) { 
-              console.warn("Failed to update AppState after login:", err); 
-          }
-      }
-
-      if (typeof updateAppStateCalculations === "function") {
-          try { await updateAppStateCalculations(data.id); } catch (err) { 
-              console.warn("Failed to update AppState after login:", err); 
-          }
-      }
+      initializeUpdate(data.id);
 
       if (data.page) window.location.href = data.page;
 

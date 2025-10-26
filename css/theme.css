@@ -231,3 +231,14 @@ html.dark-mode #energyTipBox {
     background-color: #1e1f22 !important;
   }
 }
+
+/* Dark mode form styling - overrides */
+html.dark-mode #content-wrapper .form-control,
+html.dark-mode #content-wrapper select.form-control,
+html.dark-mode #content-wrapper textarea.form-control {
+    background-color: #222 !important;
+    color: #eee !important;
+    border: 1px solid #444 !important;
+    box-shadow: none !important;
+}
+

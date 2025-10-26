@@ -48,6 +48,10 @@ async function loadPage(page, pushState = true) {
           initDashboardPage();
       }
 
+      if (page.includes("history.html") && typeof initBillingPage == "function") {
+        initBillingPage();
+      }
+
       if (typeof initGoalsPage === "function") {
         const form = document.getElementById("energyGoalsForm");
         const clear = document.getElementById("clearGoals");
