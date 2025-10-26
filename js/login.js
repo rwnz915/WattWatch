@@ -142,7 +142,7 @@ async function signIn() {
       if (data.page) window.location.href = data.page;
 
     } else {
-      showMessage(data.message || "Incorrect email or password");
+      showMessage(/*data.message ||*/ "Incorrect email or password");
     }
   } catch (err) {
     showMessage("Server error. Please try again later.");
