@@ -194,7 +194,6 @@ function initProfilePhoto(user) {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        //credentials: "include",
         body: JSON.stringify({ userId: user.id, profileImage: imageData })
       });
 
