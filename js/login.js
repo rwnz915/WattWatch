@@ -107,7 +107,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
         // Navigate to last saved page if different
         if (user.page && user.page !== "pages/dashboard.html") {
-          await loadPage(user.page);
+          window.location.href = user.page;
         }
 
       } catch (err) {
