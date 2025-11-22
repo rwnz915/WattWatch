@@ -138,6 +138,7 @@ async function loadCurrentAndHistory() {
 
 // ✅ View bill modal
 async function viewHistoryDetails(id) {
+    //console.log("Viewing bill ID:", id);
     const res = await fetch(`${API_BASE}/${id}`);
     const bill = await res.json();
 
