@@ -337,6 +337,9 @@
         if (topbarImg) topbarImg.src = userInfo.profileImage;
 
         document.getElementById("logoutBtn").addEventListener("click", () => {
+            AppState.clearCalculator();
+            AppState.clearGoals();
+            AppState.setElectricityRate(0);
             clearUserInfo(); // clear localStorage + sessionStorage
             window.location.href = "index.html"; // redirect to login
             localStorage.removeItem("theme");

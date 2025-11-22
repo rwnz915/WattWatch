@@ -42,6 +42,8 @@ passwordToggle.addEventListener("click", () => {
 
 async function initializeUpdate(userId) {
     //console.log("Initializing...");
+    AppState.clearCalculator();
+    AppState.clearGoals();
     AppState.setElectricityRate(13.47);
 
     try {
