@@ -190,7 +190,7 @@ function initProfilePhoto(user) {
       const res = await fetch("https://wattwatch-backend.onrender.com/api/auth/update-profile-image", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        //credentials: "include",
         body: JSON.stringify({ userId: user.id, profileImage: imageData })
       });
 
