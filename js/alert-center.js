@@ -91,18 +91,18 @@ if (percent >= 100) {
 
 // Meralco / info alert
 alerts.push({
-    date: "Oct 2025",
-    message: `Meralco rate increased to <strong>₱13.32 per kWh</strong>.`,
+    date: "Nov 2025",
+    message: `Meralco rate increased to <strong>₱13.47 per kWh</strong>.`,
     color: "info",
     icon: "fas fa-bolt",
     details: `
     <div class="m-3">
-        Meralco announced a <strong>₱0.23 per kWh</strong> increase for October 2025, 
-        bringing the rate to <strong>₱13.32 per kWh</strong>.<br>
+        Meralco announced a <strong>₱0.15 per kWh</strong> increase for November 2025, 
+        bringing the rate to <strong>₱13.47 per kWh</strong>.<br>
         The rise was mainly due to higher <strong>generation charges</strong> from 
         Independent Power Producers and Power Supply Agreements.  
         <div class="mt-2">
-            <a href="https://company.meralco.com.ph/news-and-advisories/higher-rates-october#:~:text=MANILA%2C%20PHILIPPINES%2C%2013%20OCTOBER%202025,a%20typical%20household%20to%20P13."
+            <a href="https://company.meralco.com.ph/news-and-advisories/higher-rates-november-2025#:~:text=MANILA%2C%20PHILIPPINES%2C%2010%20NOVEMBER%202025,3182%20per%20kWh%20in%20October."
                target="_blank" rel="noopener noreferrer">Read full advisory</a>
         </div>
     </div>

@@ -42,7 +42,7 @@ passwordToggle.addEventListener("click", () => {
 
 async function initializeUpdate(userId) {
     //console.log("Initializing...");
-    AppState.setElectricityRate(13.32);
+    AppState.setElectricityRate(13.47);
 
     try {
         if (typeof ensureMonthRollover === "function") {
