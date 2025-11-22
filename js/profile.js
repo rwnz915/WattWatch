@@ -31,6 +31,7 @@ function initProfilePage() {
         const res = await fetch("https://wattwatch-backend.onrender.com/api/auth/update-name", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({
             userId: user.id,
             firstName: result.firstName,
@@ -70,6 +71,7 @@ function initProfilePage() {
         const res = await fetch("https://wattwatch-backend.onrender.com/api/auth/update-email", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({
             userId: user.id,
             newEmail: result.email,
@@ -108,6 +110,7 @@ function initProfilePage() {
         const res = await fetch("https://wattwatch-backend.onrender.com/api/auth/change-password", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({
             userId: user.id,
             currentPassword: result.current,
@@ -190,6 +193,7 @@ function initProfilePhoto(user) {
       const res = await fetch("https://wattwatch-backend.onrender.com/api/auth/update-profile-image", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         //credentials: "include",
         body: JSON.stringify({ userId: user.id, profileImage: imageData })
       });
