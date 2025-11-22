@@ -1,3 +1,4 @@
+// -------------------- FETCH WRAPPER FOR NPROGRESS --------------------
 const originalFetch = window.fetch;
 window.fetch = async function (...args) {
   NProgress.start();
@@ -9,16 +10,16 @@ window.fetch = async function (...args) {
   }
 };
 
-let loginEmailInput = document.getElementById("exampleInputEmail");
-let loginPasswordInput = document.getElementById("exampleInputPassword");
-let loginBtn = document.getElementById("loginBtn");
-let rememberMeInput = document.getElementById("customCheck"); // checkbox element
-let googleLoginBtn = document.getElementById("googleLoginBtn"); // Google button
+// -------------------- ELEMENTS --------------------
+const loginEmailInput = document.getElementById("exampleInputEmail");
+const loginPasswordInput = document.getElementById("exampleInputPassword");
+const loginBtn = document.getElementById("loginBtn");
+const rememberMeInput = document.getElementById("customCheck");
+const googleLoginBtn = document.getElementById("googleLoginBtn");
 
 loginPasswordInput.maxLength = 16;
 
-
-// ----------------- PASSWORD TOGGLE -----------------
+// -------------------- PASSWORD TOGGLE --------------------
 const passwordToggle = document.createElement("span");
 passwordToggle.innerHTML = '<i class="fas fa-eye"></i>';
 passwordToggle.style.cursor = "pointer";
@@ -31,65 +32,55 @@ loginPasswordInput.parentElement.style.position = "relative";
 loginPasswordInput.parentElement.appendChild(passwordToggle);
 
 passwordToggle.addEventListener("click", () => {
-    if (loginPasswordInput.type === "password") {
-        loginPasswordInput.type = "text";
-        passwordToggle.innerHTML = '<i class="fas fa-eye-slash"></i>';
-    } else {
-        loginPasswordInput.type = "password";
-        passwordToggle.innerHTML = '<i class="fas fa-eye"></i>';
-    }
+  if (loginPasswordInput.type === "password") {
+    loginPasswordInput.type = "text";
+    passwordToggle.innerHTML = '<i class="fas fa-eye-slash"></i>';
+  } else {
+    loginPasswordInput.type = "password";
+    passwordToggle.innerHTML = '<i class="fas fa-eye"></i>';
+  }
 });
 
-async function initializeUpdate(userId) {
-    //console.log("Initializing...");
-    AppState.clearCalculator();
-    AppState.clearGoals();
-    AppState.setElectricityRate(13.47);
+// -------------------- PAGE CACHE --------------------
+const pageCache = {};
 
+async function preloadPages(pages = []) {
+  const promises = pages.map(async (page) => {
     try {
-        if (typeof ensureMonthRollover === "function") {
-            await ensureMonthRollover();
-        }
+      const response = await fetch(page);
+      if (!response.ok) throw new Error("Page not found: " + page);
+      const html = await response.text();
+      pageCache[page] = html;
     } catch (err) {
-        console.warn("⚠️ ensureMonthRollover failed:", err);
+      console.warn("Failed to preload page:", page, err);
     }
-
-    try {
-        if (typeof loadCurrentAndHistory === "function") {
-            await loadCurrentAndHistory();
-        }
-    } catch (err) {
-        console.warn("⚠️ loadCurrentAndHistory failed:", err);
-    }
-
-    try {
-        if (typeof loadSettings === "function") {
-            await loadSettings();
-        }
-    } catch (err) {
-        console.warn("⚠️ loadSettings failed:", err);
-    }
-
-    try {
-        if (typeof updateAppStateGoals === "function") {
-            await updateAppStateGoals(userId);
-        }
-    } catch (err) {
-        console.warn("⚠️ updateAppStateGoals failed:", err);
-    }
-
-    try {
-        if (typeof updateAppStateCalculations === "function") {
-            await updateAppStateCalculations(userId);
-        }
-    } catch (err) {
-        console.warn("⚠️ updateAppStateCalculations failed:", err);
-    }
-
-    //console.log("initialization complete.");
+  });
+  await Promise.all(promises);
 }
 
-// ----------------- AUTO-LOGIN -----------------
+// -------------------- APPSTATE INITIALIZATION --------------------
+async function initializeAppState(userId) {
+  AppState.clearCalculator();
+  AppState.clearGoals();
+  AppState.setElectricityRate(13.47);
+
+  try { if (typeof ensureMonthRollover === "function") await ensureMonthRollover(); } catch (err) { console.warn(err); }
+  try { if (typeof loadCurrentAndHistory === "function") await loadCurrentAndHistory(); } catch (err) { console.warn("⚠ loadCurrentAndHistory failed:", err); }
+  try { if (typeof loadSettings === "function") await loadSettings(); } catch (err) { console.warn("⚠ loadSettings failed:", err); }
+  try { if (typeof updateAppStateGoals === "function") await updateAppStateGoals(userId); } catch (err) { console.warn("⚠ updateAppStateGoals failed:", err); }
+  try { if (typeof updateAppStateCalculations === "function") await updateAppStateCalculations(userId); } catch (err) { console.warn("⚠ updateAppStateCalculations failed:", err); }
+}
+
+// -------------------- LOAD DASHBOARD --------------------
+async function renderDashboardPage() {
+  if (typeof loadPage !== "function") {
+    console.warn("loadPage is not defined yet. Delaying dashboard render.");
+    return;
+  }
+  window.location.href ="pages/dashboard.html";
+}
+
+// -------------------- AUTO-LOGIN --------------------
 window.addEventListener("DOMContentLoaded", async () => {
   try {
     const user = getUserInfo();
@@ -98,10 +89,25 @@ window.addEventListener("DOMContentLoaded", async () => {
         const resp = await fetch("https://wattwatch-backend.onrender.com/health/ping");
         if (!resp.ok) throw new Error("server not reachable");
 
-        initializeUpdate(user.id);
+        // Preload all pages first
+        await preloadPages([
+          "pages/dashboard.html",
+          "pages/calculator.html",
+          "pages/goals.html",
+          "pages/history.html",
+          "pages/profile.html",
+          "pages/activity_log.html"
+        ]);
 
-        if (user.page) {
-          window.location.href = user.page;
+        // Load AppState first
+        await initializeAppState(user.id);
+
+        // Then render dashboard
+        await renderDashboardPage();
+
+        // Navigate to last saved page if different
+        if (user.page && user.page !== "pages/dashboard.html") {
+          await loadPage(user.page);
         }
 
       } catch (err) {
@@ -125,7 +131,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// ----------------- SIGN-IN -----------------
+// -------------------- SIGN-IN --------------------
 async function signIn() {
   const loginEmail = loginEmailInput.value.trim();
   const loginPassword = loginPasswordInput.value.trim();
@@ -142,48 +148,73 @@ async function signIn() {
       body: JSON.stringify({ email: loginEmail, password: loginPassword })
     });
 
-    const data = await response.json();
-
-    if (response.ok) {
-      const userData = {
-        id: data.id,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        page: data.page,
-        isGoogleUser: data.isGoogleUser ?? false,
-        createdAt: data.createdAt ?? null,
-        profileImage: data.profileImage ?? "img/undraw_profile.svg"
-      };
-
-      setUserInfo(userData, rememberMeInput && rememberMeInput.checked);
-
-      initializeUpdate(data.id);
-
-      if (data.page) window.location.href = data.page;
-
-    } else {
-      showMessage(/*data.message ||*/ "Incorrect email or password");
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonErr) {
+      console.error("Failed to parse JSON:", jsonErr, await response.text());
+      showMessage("Server returned invalid response.");
+      return;
     }
+
+    if (!response.ok) {
+      showMessage(data.message || "Incorrect email or password");
+      return;
+    }
+
+    const userData = {
+      id: data.id,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      page: data.page,
+      isGoogleUser: data.isGoogleUser ?? false,
+      createdAt: data.createdAt ?? null,
+      profileImage: data.profileImage ?? "img/undraw_profile.svg"
+    };
+
+    setUserInfo(userData, rememberMeInput && rememberMeInput.checked);
+
+    // Preload all pages first
+    await preloadPages([
+      "pages/dashboard.html",
+      "pages/calculator.html",
+      "pages/goals.html",
+      "pages/history.html",
+      "pages/profile.html",
+      "pages/activity_log.html"
+    ]);
+
+    // Load AppState first
+    await initializeAppState(data.id);
+
+    // Render dashboard
+    await renderDashboardPage();
+
+    // Navigate to last saved page if different
+    if (data.page && data.page !== "pages/dashboard.html") {
+      window.location.href = data.page;
+    }
+
   } catch (err) {
+    console.error("Login fetch error:", err);
     showMessage("Server error. Please try again later.");
-    console.error(err);
   }
 }
 
 loginBtn.addEventListener("click", signIn);
 
-// Make Enter key trigger login
+// -------------------- ENTER KEY LOGIN --------------------
 [loginEmailInput, loginPasswordInput].forEach(input => {
-    input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            loginBtn.click();
-        }
-    });
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      loginBtn.click();
+    }
+  });
 });
 
-// ----------------- GOOGLE LOGIN -----------------
+// -------------------- GOOGLE LOGIN --------------------
 googleLoginBtn.addEventListener("click", () => {
   const clientId = "988525355387-trr9q5aoejn7l83o822mk6689g85j87m.apps.googleusercontent.com";
   const redirectUri = "https://watt-watch.vercel.app/google-callback.html";
@@ -192,7 +223,6 @@ googleLoginBtn.addEventListener("click", () => {
   const prompt = "select_account";
 
   const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${encodeURIComponent(scope)}&prompt=${prompt}`;
-
 
   window.location.href = oauthUrl;
 });
