@@ -5,56 +5,19 @@
   <title>Google Callback</title>
   <script src="js/userHelper.js"></script>
   <script src="js/settings.js"></script>
-    <script src="js/appState.js"></script>
+  <script src="js/appState.js"></script>
+
   <script>
-    async function initializeUpdate(userId) {
-    //console.log("Initializing...");
-    AppState.clearCalculator();
-    AppState.clearGoals();
-    AppState.setElectricityRate(13.47);
+    async function initializeAppState(userId) {
+      AppState.clearCalculator();
+      AppState.clearGoals();
+      AppState.setElectricityRate(13.47);
 
-    try {
-        if (typeof ensureMonthRollover === "function") {
-            await ensureMonthRollover();
-        }
-    } catch (err) {
-        console.warn("⚠️ ensureMonthRollover failed:", err);
+      try { if (typeof ensureMonthRollover === "function") await ensureMonthRollover(); } catch (err) { console.warn("⚠ ensureMonthRollover failed:", err); }
+      try { if (typeof loadSettings === "function") await loadSettings(); } catch (err) { console.warn("⚠ loadSettings failed:", err); }
+      try { if (typeof updateAppStateGoals === "function") await updateAppStateGoals(userId); } catch (err) { console.warn("⚠ updateAppStateGoals failed:", err); }
+      try { if (typeof updateAppStateCalculations === "function") await updateAppStateCalculations(userId); } catch (err) { console.warn("⚠ updateAppStateCalculations failed:", err); }
     }
-
-    try {
-        if (typeof loadCurrentAndHistory === "function") {
-            await loadCurrentAndHistory();
-        }
-    } catch (err) {
-        console.warn("⚠️ loadCurrentAndHistory failed:", err);
-    }
-
-    try {
-        if (typeof loadSettings === "function") {
-            await loadSettings();
-        }
-    } catch (err) {
-        console.warn("⚠️ loadSettings failed:", err);
-    }
-
-    try {
-        if (typeof updateAppStateGoals === "function") {
-            await updateAppStateGoals(userId);
-        }
-    } catch (err) {
-        console.warn("⚠️ updateAppStateGoals failed:", err);
-    }
-
-    try {
-        if (typeof updateAppStateCalculations === "function") {
-            await updateAppStateCalculations(userId);
-        }
-    } catch (err) {
-        console.warn("⚠️ updateAppStateCalculations failed:", err);
-    }
-
-    //console.log("initialization complete.");
-}
 
     async function handleGoogleCallback() {
       const params = new URLSearchParams(window.location.search);
@@ -62,6 +25,7 @@
 
       if (!code) {
         alert("No code returned from Google");
+        window.location.href = "index.html";
         return;
       }
 
@@ -72,29 +36,41 @@
           body: JSON.stringify({ code })
         });
 
-        const data = await res.json();
+        let data;
+        try {
+          data = await res.json();
+        } catch (jsonErr) {
+          console.error("Failed to parse JSON:", jsonErr, await res.text());
+          alert("Invalid response from server");
+          window.location.href = "index.html";
+          return;
+        }
 
-        if (res.ok) {
-          // Save user info like normal login
-          setUserInfo({
-            id: data.id,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email,
-            page: data.page,
-            isGoogleUser: data.isGoogleUser ?? false,
-            createdAt: data.createdAt ?? null,
-            profileImage: data.profileImage ?? "img/undraw_profile.svg"
-          }, true); // remember me
-
-          initializeUpdate(data.id);
-
-          // Redirect to user/admin page
-          window.location.href = data.page;
-        } else {
+        if (!res.ok) {
           alert(data.message || "Google login failed");
           window.location.href = "index.html";
+          return;
         }
+
+        setUserInfo({
+          id: data.id,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          page: data.page,
+          isGoogleUser: data.isGoogleUser ?? false,
+          createdAt: data.createdAt ?? null,
+          profileImage: data.profileImage ?? "img/undraw_profile.svg"
+        }, true); // remember me
+
+        await initializeAppState(data.id);
+
+        if (data.page) {
+          window.location.href = data.page;
+        } else {
+          window.location.href = "pages/dashboard.html";
+        }
+
       } catch (err) {
         console.error(err);
         alert("Server error during Google login");
@@ -106,6 +82,6 @@
   </script>
 </head>
 <body>
-  <p>Logging in with Google...</p>
+  <p>Logging in with Google... Please wait.</p>
 </body>
 </html>
