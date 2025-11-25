@@ -10,7 +10,16 @@
             
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold table-title">History</h6>
-                <button class="btn btn-outline-danger btn-sm" id="clearHistoryBtn">Clear All</button>
+                <div class="d-flex gap-2">
+                <button class="btn btn-success btn-sm mr-2" id="exportExcelBtn">
+                    Export to Excel
+                </button>
+
+                <button class="btn btn-outline-danger btn-sm" id="clearHistoryBtn">
+                    Clear All
+                </button>
+            </div>
+
             </div>
 
             <div class="card-body p-0">
@@ -46,11 +55,11 @@
     </div>
 
     <!-- Full Bill Details Modal -->
-    <div class="modal fade" id="detaisModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content shadow modal-theme">
-                <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title">Bill Details</h5>
+    <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0">
+                <div class="modal-header text-white">
+                    <p class="modal-title">Details</p>
                     <button class="close text-white" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body" id="modalContent"></div>
@@ -60,4 +69,5 @@
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="js/history.js"></script>

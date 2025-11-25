@@ -158,7 +158,7 @@ async function signIn() {
     }
 
     if (!response.ok) {
-      showMessage(data.message || "Incorrect email or password");
+      showMessage("Incorrect email or password");
       return;
     }
 
