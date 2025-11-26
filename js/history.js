@@ -137,32 +137,24 @@ async function loadCurrentAndHistory() {
 }
 
 // View bill modal
-async function viewHistoryDetails(id) {
+function viewHistoryDetails() {
     try {
-        // Fetch bill summary
-        const res = await fetch(`${API_BASE}/${id}`);
-        const bill = await res.json();
-
-        const monthLabel = bill.monthLabel || bill.month_label;
-        const kwh = bill.kwhUsed || bill.kwh_used || bill.totalKwh || 0;
-        const total = bill.totalAmount || bill.total_amount || bill.totalCost || 0;
-
-        // Fetch appliances used for this month
-        const user = getUserInfo();
-        const resApp = await fetch(`https://wattwatch-backend.onrender.com/api/calculation/history/${user.id}`);
-        const appliances = await resApp.json();
-
-        // Get user goals from AppState
+        // Get current calculator and goals from AppState
+        const calcu = AppState.getCalculator();
         const goals = AppState.getGoals();
+
+        const monthLabel = monthLabelFromDate(); // current month
+        const kwh = calcu.totalKwhMonth || 0;
+        const total = calcu.totalCostMonth || 0;
 
         // Build appliance list HTML
         let applianceHTML = "";
-        if (appliances.length === 0) {
+        if (!calcu.items || calcu.items.length === 0) {
             applianceHTML = `<p class="text-muted">No appliances recorded.</p>`;
         } else {
             applianceHTML = `
                 <ul class="list-group">
-                    ${appliances.map(a => `
+                    ${calcu.items.map(a => `
                         <li class="list-group-item small">
                             <strong>${a.appliance}</strong><br>
                             <span>Wattage: ${a.wattage}W</span><br>
@@ -223,61 +215,48 @@ document.addEventListener("click", e => {
     }
 });
 
-async function exportHistoryToExcel() {
-    const user = getUserInfo();
-    if (!user?.id) return;
-
+function exportHistoryToExcel() {
     try {
-        // --- GET BILL HISTORY ---
-        const resHist = await fetch(`${API_BASE}/history/${user.id}`);
-        const hist = await resHist.json();
+        const calcu = AppState.getCalculator();
+        const goals = AppState.getGoals();
 
-        if (!hist || hist.length === 0) {
-            alert("No history to export.");
+        if (!calcu.items || calcu.items.length === 0) {
+            //alert("No data to export.");
             return;
         }
 
-        // --- GET ALL APPLIANCES ---
-        const resApp = await fetch(`https://wattwatch-backend.onrender.com/api/calculation/history/${user.id}`);
-        const appliances = await resApp.json();
+        const monthLabel = monthLabelFromDate(); // current month
+        const [month, year] = monthLabel.split(" ");
+        const kwh = Number(calcu.totalKwhMonth || 0).toFixed(2);
+        const total = Number(calcu.totalCostMonth || 0).toFixed(2);
 
-        const rows = [];
+        const rows = calcu.items.map(app => ({
+            Year: year || "",
+            Month: month || "",
+            "KWh Used": kwh,
+            "Total Amount (₱)": total,
+            Appliance: app.appliance || "",
+            Wattage: app.wattage || "",
+            "Hours/Day": app.hours || ""
+        }));
 
-        hist.forEach(h => {
-            const monthLabel = h.monthLabel || h.month_label || "";
-            const [month, year] = monthLabel.split(" ");
-            const kwh = Number(h.kwhUsed || h.kwh_used || h.totalKwh || 0).toFixed(2);
-            const total = Number(h.totalAmount || h.total_amount || h.totalCost || 0).toFixed(2);
-
-            if (appliances.length === 0) {
-                rows.push({
-                    Year: year || "",
-                    Month: month || "",
-                    "KWh Used": kwh,
-                    "Total Amount (₱)": total,
-                    Appliance: "",
-                    Wattage: "",
-                    "Hours/Day": ""
-                });
-            } else {
-                appliances.forEach(app => {
-                    rows.push({
-                        Year: year || "",
-                        Month: month || "",
-                        "KWh Used": kwh,
-                        "Total Amount (₱)": total,
-                        Appliance: app.appliance || "",
-                        Wattage: app.wattage || "",
-                        "Hours/Day": app.hours || ""
-                    });
-                });
-            }
+        // Add a summary row for goals
+        rows.push({
+            Year: year || "",
+            Month: month || "",
+            "KWh Used": goals.targetUsage || "",
+            "Total Amount (₱)": goals.targetBill || "",
+            Appliance: "Goals",
+            Wattage: "",
+            "Hours/Day": ""
         });
 
         const worksheet = XLSX.utils.json_to_sheet(rows);
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Billing History");
-        XLSX.writeFile(workbook, "Billing_History_With_Appliances.xlsx");
+        XLSX.utils.book_append_sheet(workbook, worksheet, "WattWatch History");
+        XLSX.writeFile(workbook, "WattWatch_History.xlsx");
+
+        //alert("Exported successfully!");
 
     } catch (err) {
         console.error("Export error:", err);

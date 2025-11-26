@@ -327,6 +327,8 @@
         let userName = document.getElementById("userName");
 
         let userInfo = getUserInfo();
+        AppState.loadGoals();
+        AppState.loadCalculator();
 
         if (!userInfo) {
             window.location.href = "index.html";
